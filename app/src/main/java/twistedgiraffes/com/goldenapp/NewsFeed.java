@@ -1,5 +1,6 @@
 package twistedgiraffes.com.goldenapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -43,7 +44,8 @@ public class NewsFeed extends AppCompatActivity
         }
     }
 
-    @Override
+    // Action Menu Stuff -- Uncomment if we want an action menu
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.news_feed, menu);
@@ -63,20 +65,20 @@ public class NewsFeed extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_calender) {
-            // Handle the camera action
+            // Handle the calender action
         } else if (id == R.id.nav_golden_ticket) {
-
+            // Handle the golden ticket action
         } else if (id == R.id.nav_map) {
-
+            Intent intent = new Intent(this, MapsActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
