@@ -46,4 +46,8 @@ public class NewsList {
         }
         return null;
     }
+
+    public void delateNewsItem(int position){
+        mNews.remove(position);
+    }
 }

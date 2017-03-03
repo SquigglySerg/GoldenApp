@@ -19,6 +19,15 @@
             android:padding="8dp"
             >
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:id="@+id/card_picture"
+                android:transitionName="@string/transition_news_picture"
+                app:srcCompat="?android:attr/colorActivatedHighlight"/>
+
+
             <TextView
                 android:id="@+id/list_item_news_headline"
                 android:layout_width="wrap_content"
@@ -40,14 +49,6 @@
                 android:animateLayoutChanges="true"
                 tools:text="News Date"/>
 
-            <TextView
-                android:id="@+id/list_item_news_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/list_item_news_headline"
-                android:padding="4dp"
-                android:animateLayoutChanges="true"
-                android:visibility="gone"/>
 
         </RelativeLayout>
 
