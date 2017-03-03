@@ -68,6 +68,7 @@ public class NewsFeedFragment extends Fragment {
         View view = inflater.inflate(R.layout.content_news_feed, container, false);
 
         mNewsFeedRecyclerView = (RecyclerView) view.findViewById(R.id.content_news_feed_recycler);
+        mNewsFeedRecyclerView.setHasFixedSize(true);
         mNewsFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         updateUI();
@@ -85,6 +86,8 @@ public class NewsFeedFragment extends Fragment {
             mAdapter.notifyDataSetChanged();
         }
     }
+
+
 
     private class NewsHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener{
