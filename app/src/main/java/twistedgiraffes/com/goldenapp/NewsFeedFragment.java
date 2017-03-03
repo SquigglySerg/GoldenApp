@@ -86,24 +86,40 @@ public class NewsFeedFragment extends Fragment {
         }
     }
 
-    private class NewsHolder extends RecyclerView.ViewHolder {
+    private class NewsHolder extends RecyclerView.ViewHolder
+        implements View.OnClickListener{
         private CardView mCardView;
         private TextView mTitleTextView;
         private TextView mDateTextView;
+        private TextView mStoryTextView;
 
         private News mNews;
 
         public NewsHolder(View itemView){
             super(itemView);
+            itemView.setOnClickListener(this);
             mCardView = (CardView) itemView.findViewById(R.id.news_card);
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_news_headline);
             mDateTextView = (TextView) itemView.findViewById(R.id.list_item_news_date);
+            mStoryTextView = (TextView) itemView.findViewById(R.id.list_item_news_text);
         }
 
         public void bindNews(News news){
             mNews = news;
             mTitleTextView.setText(mNews.getHeadline());
             mDateTextView.setText(mNews.getDate().toString());
+            mStoryTextView.setText(mNews.getFullStory());
+            mStoryTextView.setVisibility(View.GONE);
+        }
+
+        /**
+         * Called when a view has been clicked.
+         *
+         * @param v The view that was clicked.
+         */
+        @Override
+        public void onClick(View v) {
+            mStoryTextView.setVisibility(View.VISIBLE);
         }
     }
 

@@ -24,11 +24,12 @@ public class NewsList {
         mNews = new ArrayList<>();
         News news = new News();
         news.setHeadline("Breaking News: This is a Headline");
-        news.setFullStory("Blah Blah Blah. You actualy can't see this currently");
+        news.setFullStory("Blah Blah Blah. You now can see this. In theory. Hopefully");
         mNews.add(news);
         for (int i = 0; i < 10; i++){
             news = new News();
             news.setHeadline("Headline " + i);
+            news.setFullStory("Example Story. Will be more here. Currently no database integration either. I will mostly likely will add a picture also because I can.");
             mNews.add(news);
         }
     }
