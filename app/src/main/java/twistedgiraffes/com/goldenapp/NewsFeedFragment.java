@@ -119,7 +119,11 @@ public class NewsFeedFragment extends Fragment {
          */
         @Override
         public void onClick(View v) {
-            mStoryTextView.setVisibility(View.VISIBLE);
+            if (mStoryTextView.getVisibility() == View.GONE){
+                mStoryTextView.setVisibility(View.VISIBLE);
+            } else {
+                mStoryTextView.setVisibility(View.GONE);
+            }
         }
     }
 
