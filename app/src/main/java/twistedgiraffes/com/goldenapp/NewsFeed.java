@@ -82,7 +82,8 @@ public class NewsFeed extends AppCompatActivity
         if (id == R.id.nav_calender) {
             // Handle the calender action
         } else if (id == R.id.nav_golden_ticket) {
-            // Handle the golden ticket action
+            Intent intent = new Intent(this, TicketActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_map) {
             Intent intent = new Intent(this, MapsActivity.class);
             startActivity(intent);

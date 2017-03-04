@@ -40,6 +40,9 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"></activity>
+        <activity
+            android:name=".TicketActivity"
+            android:label="@string/golden_ticket" ></activity>
     </application>
 
 </manifest>
