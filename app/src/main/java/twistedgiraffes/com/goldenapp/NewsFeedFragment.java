@@ -1,26 +1,67 @@
 package twistedgiraffes.com.goldenapp;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.text.DateFormat;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by rybailey on 2/27/17.
  */
 
 public class NewsFeedFragment extends Fragment {
+
+    private static final String TAG ="NEWS_FEED";
+
     private RecyclerView mNewsFeedRecyclerView;
+    private ItemTouchHelper mItemTouchHelper;
     private NewsAdapter mAdapter;
+    private Callbacks mCallbacks;
+
+    public interface Callbacks{
+         void onNewsSelect(News news);
+    }
+
+
+    /**
+     * Called when a fragment is first attached to its activity.
+     * {@link #onCreate(Bundle)} will be called after this.
+     *
+     * @param activity
+     * @deprecated See {@link #onAttach(Context)}.
+     */
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    /**
+     * Called when the fragment is no longer attached to its activity.  This
+     * is called after {@link #onDestroy()}.
+     */
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     /**
      * Called to do initial creation of a fragment.  This is called after
@@ -42,6 +83,7 @@ public class NewsFeedFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     /**
@@ -67,9 +109,68 @@ public class NewsFeedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.content_news_feed, container, false);
 
+        ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.END){
+            /**
+             * Called when ItemTouchHelper wants to move the dragged item from its old position to
+             * the new position.
+             * <p>
+             * If this method returns true, ItemTouchHelper assumes {@code viewHolder} has been moved
+             * to the adapter position of {@code target} ViewHolder
+             * ({@link ViewHolder#getAdapterPosition()
+             * ViewHolder#getAdapterPosition()}).
+             * <p>
+             * If you don't support drag & drop, this method will never be called.
+             *
+             * @param recyclerView The RecyclerView to which ItemTouchHelper is attached to.
+             * @param viewHolder   The ViewHolder which is being dragged by the user.
+             * @param target       The ViewHolder over which the currently active item is being
+             *                     dragged.
+             * @return True if the {@code viewHolder} has been moved to the adapter position of
+             * {@code target}.
+             * @see #onMoved(RecyclerView, ViewHolder, int, ViewHolder, int, int, int)
+             */
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            /**
+             * Called when a ViewHolder is swiped by the user.
+             * <p>
+             * If you are returning relative directions ({@link #START} , {@link #END}) from the
+             * {@link #getMovementFlags(RecyclerView, ViewHolder)} method, this method
+             * will also use relative directions. Otherwise, it will use absolute directions.
+             * <p>
+             * If you don't support swiping, this method will never be called.
+             * <p>
+             * ItemTouchHelper will keep a reference to the View until it is detached from
+             * RecyclerView.
+             * As soon as it is detached, ItemTouchHelper will call
+             * {@link #clearView(RecyclerView, ViewHolder)}.
+             *
+             * @param viewHolder The ViewHolder which has been swiped by the user.
+             * @param direction  The direction to which the ViewHolder is swiped. It is one of
+             *                   {@link #UP}, {@link #DOWN},
+             *                   {@link #LEFT} or {@link #RIGHT}. If your
+             *                   {@link #getMovementFlags(RecyclerView, ViewHolder)}
+             *                   method
+             *                   returned relative flags instead of {@link #LEFT} / {@link #RIGHT};
+             *                   `direction` will be relative as well. ({@link #START} or {@link
+             *                   #END}).
+             */
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                NewsList newsList = NewsList.get(getActivity());
+                newsList.delateNewsItem(viewHolder.getAdapterPosition());
+                mAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+            }
+        };
+        mItemTouchHelper = new ItemTouchHelper(callback);
+
         mNewsFeedRecyclerView = (RecyclerView) view.findViewById(R.id.content_news_feed_recycler);
         mNewsFeedRecyclerView.setHasFixedSize(true);
         mNewsFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mItemTouchHelper.attachToRecyclerView(mNewsFeedRecyclerView);
 
         updateUI();
 
@@ -83,7 +184,7 @@ public class NewsFeedFragment extends Fragment {
             mAdapter = new NewsAdapter(news);
             mNewsFeedRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.notifyDataSetChanged();
+            //mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -91,28 +192,36 @@ public class NewsFeedFragment extends Fragment {
 
     private class NewsHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener{
-        private CardView mCardView;
         private TextView mTitleTextView;
         private TextView mDateTextView;
-        private TextView mStoryTextView;
-
+        private TextView mFullStory;
         private News mNews;
 
         public NewsHolder(View itemView){
             super(itemView);
             itemView.setOnClickListener(this);
-            mCardView = (CardView) itemView.findViewById(R.id.news_card);
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_news_headline);
             mDateTextView = (TextView) itemView.findViewById(R.id.list_item_news_date);
-            mStoryTextView = (TextView) itemView.findViewById(R.id.list_item_news_text);
+            mFullStory = (TextView) itemView.findViewById(R.id.list_item_full_story);
         }
 
         public void bindNews(News news){
             mNews = news;
             mTitleTextView.setText(mNews.getHeadline());
-            mDateTextView.setText(mNews.getDate().toString());
-            mStoryTextView.setText(mNews.getFullStory());
-            mStoryTextView.setVisibility(View.GONE);
+            String stringDate = DateFormat.getDateInstance().format(mNews.getDate());
+            mDateTextView.setText(stringDate);
+            mFullStory.setText(mNews.getFullStory());
+            updateTextBox();
+        }
+
+        private void updateTextBox(){
+            if (mNews != null){
+                if (mNews.getToogle()){
+                    mFullStory.setVisibility(View.VISIBLE);
+                } else {
+                    mFullStory.setVisibility(View.GONE);
+                }
+            }
         }
 
         /**
@@ -122,20 +231,23 @@ public class NewsFeedFragment extends Fragment {
          */
         @Override
         public void onClick(View v) {
-            if (mStoryTextView.getVisibility() == View.GONE){
-                mStoryTextView.setVisibility(View.VISIBLE);
-            } else {
-                mStoryTextView.setVisibility(View.GONE);
-            }
+            //mCallbacks.onNewsSelect(mNews);
+            mNews.setToogle(!mNews.getToogle());
+            updateTextBox();
+            Log.i(TAG, "Full Text was toogled");
+            mAdapter.notifyItemChanged(getAdapterPosition());
         }
     }
 
     private class NewsAdapter extends RecyclerView.Adapter<NewsHolder>{
-        private List<News> mNews;
+        private NewsList mNews;
 
         public NewsAdapter(List<News> news){
-            mNews = news;
+            mNews = NewsList.get(getContext());
+            setHasStableIds(false);
         }
+
+
 
         /**
          * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
@@ -186,7 +298,7 @@ public class NewsFeedFragment extends Fragment {
          */
         @Override
         public void onBindViewHolder(NewsHolder holder, int position) {
-            News news = mNews.get(position);
+            News news = mNews.getNewsList().get(position);
             holder.bindNews(news);
         }
 
@@ -198,6 +310,21 @@ public class NewsFeedFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mNews.size();
+        }
+
+
+
+        /**
+         * Return the stable ID for the item at <code>position</code>. If {@link #hasStableIds()}
+         * would return false this method should return {@link #NO_ID}. The default implementation
+         * of this method returns {@link #NO_ID}.
+         *
+         * @param position Adapter position to query
+         * @return the stable ID of the item at position
+         */
+        @Override
+        public long getItemId(int position) {
+            return mNews.getSessionIdFromPosition(position);
         }
     }
 
