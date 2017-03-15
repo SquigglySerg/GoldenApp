@@ -1,5 +1,6 @@
 package twistedgiraffes.com.goldenapp;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -7,22 +8,60 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.text.DateFormat;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by rybailey on 2/27/17.
  */
 
 public class NewsFeedFragment extends Fragment {
+
+    private static final String TAG ="NEWS_FEED";
+
     private RecyclerView mNewsFeedRecyclerView;
     private ItemTouchHelper mItemTouchHelper;
     private NewsAdapter mAdapter;
+    private Callbacks mCallbacks;
+
+    public interface Callbacks{
+         void onNewsSelect(News news);
+    }
+
+
+    /**
+     * Called when a fragment is first attached to its activity.
+     * {@link #onCreate(Bundle)} will be called after this.
+     *
+     * @param activity
+     * @deprecated See {@link #onAttach(Context)}.
+     */
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    /**
+     * Called when the fragment is no longer attached to its activity.  This
+     * is called after {@link #onDestroy()}.
+     */
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     /**
      * Called to do initial creation of a fragment.  This is called after
@@ -153,27 +192,36 @@ public class NewsFeedFragment extends Fragment {
 
     private class NewsHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener{
-        private CardView mCardView;
         private TextView mTitleTextView;
         private TextView mDateTextView;
-        private TextView mStoryTextView;
+        private TextView mFullStory;
         private News mNews;
 
         public NewsHolder(View itemView){
             super(itemView);
             itemView.setOnClickListener(this);
-            mCardView = (CardView) itemView.findViewById(R.id.news_card);
             mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_news_headline);
             mDateTextView = (TextView) itemView.findViewById(R.id.list_item_news_date);
-            mStoryTextView = (TextView) itemView.findViewById(R.id.list_item_news_text);
+            mFullStory = (TextView) itemView.findViewById(R.id.list_item_full_story);
         }
 
         public void bindNews(News news){
             mNews = news;
             mTitleTextView.setText(mNews.getHeadline());
-            mDateTextView.setText(mNews.getDate().toString());
-            mStoryTextView.setText(mNews.getFullStory());
-            mStoryTextView.setVisibility(View.GONE);
+            String stringDate = DateFormat.getDateInstance().format(mNews.getDate());
+            mDateTextView.setText(stringDate);
+            mFullStory.setText(mNews.getFullStory());
+            updateTextBox();
+        }
+
+        private void updateTextBox(){
+            if (mNews != null){
+                if (mNews.getToogle()){
+                    mFullStory.setVisibility(View.VISIBLE);
+                } else {
+                    mFullStory.setVisibility(View.GONE);
+                }
+            }
         }
 
         /**
@@ -183,20 +231,23 @@ public class NewsFeedFragment extends Fragment {
          */
         @Override
         public void onClick(View v) {
-            if (mStoryTextView.getVisibility() == View.GONE){
-                mStoryTextView.setVisibility(View.VISIBLE);
-            } else {
-                mStoryTextView.setVisibility(View.GONE);
-            }
+            //mCallbacks.onNewsSelect(mNews);
+            mNews.setToogle(!mNews.getToogle());
+            updateTextBox();
+            Log.i(TAG, "Full Text was toogled");
+            mAdapter.notifyItemChanged(getAdapterPosition());
         }
     }
 
     private class NewsAdapter extends RecyclerView.Adapter<NewsHolder>{
-        private List<News> mNews;
+        private NewsList mNews;
 
         public NewsAdapter(List<News> news){
-            mNews = news;
+            mNews = NewsList.get(getContext());
+            setHasStableIds(false);
         }
+
+
 
         /**
          * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
@@ -247,7 +298,7 @@ public class NewsFeedFragment extends Fragment {
          */
         @Override
         public void onBindViewHolder(NewsHolder holder, int position) {
-            News news = mNews.get(position);
+            News news = mNews.getNewsList().get(position);
             holder.bindNews(news);
         }
 
@@ -259,6 +310,21 @@ public class NewsFeedFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mNews.size();
+        }
+
+
+
+        /**
+         * Return the stable ID for the item at <code>position</code>. If {@link #hasStableIds()}
+         * would return false this method should return {@link #NO_ID}. The default implementation
+         * of this method returns {@link #NO_ID}.
+         *
+         * @param position Adapter position to query
+         * @return the stable ID of the item at position
+         */
+        @Override
+        public long getItemId(int position) {
+            return mNews.getSessionIdFromPosition(position);
         }
     }
 

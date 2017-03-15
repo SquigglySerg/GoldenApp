@@ -50,4 +50,27 @@ public class NewsList {
     public void delateNewsItem(int position){
         mNews.remove(position);
     }
+
+    public int getPositionFromSessionId(long id){
+        for(int i = 0; i < mNews.size(); ++i){
+            News news = mNews.get(i);
+            if (news.getSessionId() == id) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public long getSessionIdFromPosition(int position){
+        return mNews.get(position).getSessionId();
+    }
+
+
+    public void delateNewsItem(long id){
+        delateNewsItem(getPositionFromSessionId(id));
+    }
+
+    public int size(){
+        return mNews.size();
+    }
 }

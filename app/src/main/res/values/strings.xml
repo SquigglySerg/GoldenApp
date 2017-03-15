@@ -9,6 +9,7 @@
     <string name="calender">Calender</string>
     <string name="golden_ticket">Golden Ticket</string>
     <string name="map">Map</string>
+
     <string name="title_activity_maps">Map</string>
     <string name="transition_news_picture">twistedgiraffes.com.goldenapp.picture_transformation</string>
 </resources>
