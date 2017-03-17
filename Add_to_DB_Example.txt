@@ -1,0 +1,28 @@
+	
+	//To add a table essentially
+	Firebase firebaseReferance = new Firebase("https://banded-charmer-160001.firebaseio.com/");
+
+	Firebase roomsRef = firebaseReferance.child("Events");
+
+
+	Event e = new Event("Mines Spring Break", "Finally all those collage students gone.", "March 25th, 2017", "Golden, CO", new LatLng(39.7554, -105.2213));
+	Event ee = new Event("Test Event", "test event desc", "", "", new LatLng(39.7554, -105.2213));
+
+	events.put("TEST1", e);
+	events.put("TEST2", ee);
+
+	roomsRef.setValue(events);
+
+
+	
+	
+	//To append to an existing table -- CRASHES CURRENTLY
+	Firebase firebaseReferance = new Firebase("https://banded-charmer-160001.firebaseio.com/");
+	Firebase eventsRef = firebaseReferance.child("Events");
+
+	Event eee = new Event("Test Event", "test event desc", "", "", new LatLng(39.7554, -105.2213));
+	Firebase newEventsRef = eventsRef.push();
+	newEventsRef.setValue("TEST3", eee);
+
+	String newEventKey = newEventsRef.getKey();
+	events.put(newEventKey, eee);
