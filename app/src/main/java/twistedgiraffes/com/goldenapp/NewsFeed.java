@@ -56,6 +56,9 @@ public class NewsFeed extends AppCompatActivity
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Event newEvent = dataSnapshot.getValue(Event.class);
                 events.put(s, newEvent);
+                if(newEvent != null) {
+                    Log.d("***Added Event ", newEvent.getTitle());
+                }
 
                 //update whatever
             }
