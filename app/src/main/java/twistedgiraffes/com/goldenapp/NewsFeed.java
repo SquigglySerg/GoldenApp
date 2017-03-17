@@ -10,13 +10,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.util.HashMap;
 
@@ -45,6 +45,11 @@ public class NewsFeed extends AppCompatActivity
         Firebase.setAndroidContext( this );
         Firebase firebaseReferance = new Firebase("https://banded-charmer-160001.firebaseio.com/");
         Firebase eventsRef = firebaseReferance.child("Events");
+
+        //Initial Query of the DataBase
+        //Query eventsQuery = eventsRef.orderByChild("date");
+        //eventsQuery.addChildEventListener(new ChildEventListener()
+
         eventsRef.addChildEventListener( new ChildEventListener() {
 
             @Override
@@ -95,36 +100,21 @@ public class NewsFeed extends AppCompatActivity
         }
     }
 
-    // Action Menu Stuff -- Uncomment if we want an action menu
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.news_feed, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
-
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_calender) {
+        if (id == R.id.nav_calendar) {
             // Handle the calender action
+
+            Log.d("*****Num Events", Integer.toString(events.size()));
+            /*for (Map.Entry<String, Event> entry : events.entrySet()) {
+                String key = entry.getKey();
+                Event event = entry.getValue();
+
+                Log.d("**** Event: ", key + " = " + event.getTitle());
+            }*/
 
         } else if (id == R.id.nav_golden_ticket) {
             Intent intent = new Intent(this, TicketActivity.class);
