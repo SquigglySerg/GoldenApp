@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1069370205605",
+    "firebase_url": "https://banded-charmer-160001.firebaseio.com",
+    "project_id": "banded-charmer-160001",
+    "storage_bucket": "banded-charmer-160001.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1069370205605:android:a38b07cd6854f83c",
+        "android_client_info": {
+          "package_name": "twistedgiraffes.com.goldenapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1069370205605-6jbn0c4o4dh1en9n2q640q0khooq28f7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "twistedgiraffes.com.goldenapp",
+            "certificate_hash": "859ec9a8870c0e85f38435fd9445e3b0695359d0"
+          }
+        },
+        {
+          "client_id": "1069370205605-v5e6jf9rsupe2jp74fbfgcfa9dbb9ptt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3FBcOUflJK-2ZZ_niqZr3FmDQGjFxapg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1069370205605-v5e6jf9rsupe2jp74fbfgcfa9dbb9ptt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
