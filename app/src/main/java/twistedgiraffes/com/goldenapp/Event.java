@@ -61,6 +61,6 @@ public class Event {
     }
 
     public Event() {
-
+        //Required by Firebase for some weird reason.
     }
 }

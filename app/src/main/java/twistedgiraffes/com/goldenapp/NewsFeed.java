@@ -23,7 +23,6 @@ import java.util.HashMap;
 public class NewsFeed extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewsFeedFragment.Callbacks {
     private static final String FIREBASE_URL = "https://banded-charmer-160001.firebaseio.com/";
-    private static final String FIREBASE_CHILD_NAME = "Events";
     private HashMap<String, Event> events;
 
     @Override
@@ -72,8 +71,8 @@ public class NewsFeed extends AppCompatActivity
 
         if (id == R.id.nav_calendar) {
             // Handle the calender action
-            addEventToDB();
-            Log.d("***Num Events:  ", Integer.toString(events.size()) );
+            Log.d("***Num Events:  ", Integer.toString(events.size()) ); //Using this to get info on the db
+
         } else if (id == R.id.nav_golden_ticket) {
             Intent intent = new Intent(this, TicketActivity.class);
             startActivity(intent);
@@ -95,7 +94,7 @@ public class NewsFeed extends AppCompatActivity
 
     private void initializeFireBase(){
         Firebase.setAndroidContext(this);
-        Firebase firebaseRef = new Firebase("https://banded-charmer-160001.firebaseio.com/");
+        Firebase firebaseRef = new Firebase(FIREBASE_URL);
 
         firebaseRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -118,19 +117,5 @@ public class NewsFeed extends AppCompatActivity
 
             }
         });
-    }
-
-    private void addEventToDB(){
-        Firebase.setAndroidContext(this);
-        Firebase firebaseRef = new Firebase(FIREBASE_URL);
-
-        Event e = new Event("Test1 Title", "Test Event", "3:00 pm", "23/3/17", "CSM");
-        Firebase eventRef = firebaseRef.child(e.getTitle());
-        eventRef.setValue(e);
-
-
-        Event e2 = new Event("Test2 Title", "Test Event", "9:00 pm", "1/3/17", "Clear Creek");
-        eventRef = firebaseRef.child(e2.getTitle());
-        eventRef.setValue(e2);
     }
 }
