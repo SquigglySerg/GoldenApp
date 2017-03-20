@@ -11,6 +11,11 @@ import android.widget.CheckBox;
 /*
 * I will make this a fragment later
 *
+*
+* Will have a set number of tickets that the user can get
+* They must be in a specific location to get each ticket
+*
+* Need a class that will contain the string value of that ticket and its location
 * */
 public class TicketActivity extends AppCompatActivity {
     private static final String KEY_CLICKED = "clicked";
