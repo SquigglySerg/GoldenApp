@@ -33,7 +33,7 @@ public class NewsFeed extends AppCompatActivity
 
 
         FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
+        Fragment fragment = fm.findFragmentById(R.id.news_feed);
 
         if (fragment == null){
             fragment = new NewsFeedFragment();
