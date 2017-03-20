@@ -10,10 +10,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.util.HashMap;
 
 public class NewsFeed extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, NewsFeedFragment.Callbacks {
+    private static final String FIREBASE_URL = "https://banded-charmer-160001.firebaseio.com/";
+    private static final String FIREBASE_CHILD_NAME = "Events";
+    private HashMap<String, Event> events;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +32,8 @@ public class NewsFeed extends AppCompatActivity
         setContentView(R.layout.activity_news_feed);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        events = new HashMap<>();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -31,6 +44,7 @@ public class NewsFeed extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        initializeFireBase();
 
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
@@ -51,36 +65,15 @@ public class NewsFeed extends AppCompatActivity
         }
     }
 
-    // Action Menu Stuff -- Uncomment if we want an action menu
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.news_feed, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
-
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_calender) {
+        if (id == R.id.nav_calendar) {
             // Handle the calender action
+            addEventToDB();
+            Log.d("***Num Events:  ", Integer.toString(events.size()) );
         } else if (id == R.id.nav_golden_ticket) {
             Intent intent = new Intent(this, TicketActivity.class);
             startActivity(intent);
@@ -98,5 +91,46 @@ public class NewsFeed extends AppCompatActivity
     public void onNewsSelect(News news) {
         Intent intent = NewsActivity.newIntent(this, news.getId());
         startActivity(intent);
+    }
+
+    private void initializeFireBase(){
+        Firebase.setAndroidContext(this);
+        Firebase firebaseRef = new Firebase("https://banded-charmer-160001.firebaseio.com/");
+
+        firebaseRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                try {
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        Event e = child.getValue(Event.class);
+
+                        Log.d("***Event:  ", e.getTitle() + " added.");
+                        events.put(child.getKey().toString(), e);
+                    }
+                }
+                catch (com.firebase.client.FirebaseException e){
+                    Log.d("****ERROR****", e.getMessage());
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    private void addEventToDB(){
+        Firebase.setAndroidContext(this);
+        Firebase firebaseRef = new Firebase(FIREBASE_URL);
+
+        Event e = new Event("Test1 Title", "Test Event", "3:00 pm", "23/3/17", "CSM");
+        Firebase eventRef = firebaseRef.child(e.getTitle());
+        eventRef.setValue(e);
+
+
+        Event e2 = new Event("Test2 Title", "Test Event", "9:00 pm", "1/3/17", "Clear Creek");
+        eventRef = firebaseRef.child(e2.getTitle());
+        eventRef.setValue(e2);
     }
 }
