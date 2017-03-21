@@ -72,7 +72,6 @@ public class NewsFeed extends AppCompatActivity
         if (id == R.id.nav_calendar) {
             // Handle the calender action
             Log.d("***Num Events:  ", Integer.toString(events.size()) ); //Using this to get info on the db
-
         } else if (id == R.id.nav_golden_ticket) {
             Intent intent = new Intent(this, TicketActivity.class);
             startActivity(intent);
@@ -117,5 +116,18 @@ public class NewsFeed extends AppCompatActivity
 
             }
         });
+    }
+
+    private void tempAddToDB(){
+        Firebase.setAndroidContext(this);
+        Firebase fb = new Firebase(FIREBASE_URL);
+
+        Event e = new Event("TEST1 TITLE", "DESC", "7:00 pm", "March 3, 2017", "Lions Park", 39.7554, -105.2213);
+        Firebase eventRef = fb.child(e.getTitle());
+        eventRef.setValue(e);
+
+        Event e2 = new Event("TEST2 TITLE", "DESC 2", "2:00 pm", "March 2, 2017", "Lions Park 2", 39.7554, -105.2213);
+        eventRef = fb.child(e2.getTitle());
+        eventRef.setValue(e2);
     }
 }
