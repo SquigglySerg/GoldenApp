@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 * They must be in a specific location to get each ticket
 *
 * Need a class that will contain the string value of that ticket and its location
+* Need fragment similar to the fragment in crim init
 * */
 public class TicketActivity extends AppCompatActivity {
     private static final String KEY_CLICKED = "clicked";
