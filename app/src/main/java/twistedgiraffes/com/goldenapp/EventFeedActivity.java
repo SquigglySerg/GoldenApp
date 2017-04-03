@@ -70,7 +70,7 @@ public class EventFeedActivity extends AppCompatActivity
 
         if (id == R.id.nav_calendar) {
             // Handle the calender action
-            Log.d("***Num Events:  ", Integer.toString(mDataBase.size()) ); //Using this to get info on the db
+            //Log.d("***Num Events:  ", Integer.toString(mDataBase.size()) ); //Using this to get info on the db
         } else if (id == R.id.nav_golden_ticket) {
             Intent intent = new Intent(this, TicketActivity.class);
             startActivity(intent);

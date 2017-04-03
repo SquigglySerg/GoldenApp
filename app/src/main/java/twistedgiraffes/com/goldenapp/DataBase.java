@@ -100,9 +100,9 @@ public class DataBase {
                 return;
             }
         }
-        mLocalList.add(e);
+        mLocalList.add(0,e);
         for (DataBaseChanged listener : mListeners){
-            listener.itemAddedAt(mLocalList.size() - 1);
+            listener.itemAddedAt(0);
         }
     }
 
