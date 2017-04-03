@@ -52,7 +52,7 @@ public class EventFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID eventId = (UUID) getArguments().getSerializable(ARG_EVENT_ID);
-        mEvent = EventList.get(getActivity()).getEvent(eventId);
+        mEvent = DataBase.get(getActivity()).getEvent(eventId);
     }
 
     /**

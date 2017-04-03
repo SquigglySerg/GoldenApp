@@ -22,6 +22,7 @@ public class EventActivity extends AppCompatActivity {
 
 
         private ViewPager mViewPager;
+        private DataBase mDataBase;
         private List<Event> mEvent;
 
     public static Intent newIntent(Context packageContext, UUID crimeId){
@@ -39,7 +40,7 @@ public class EventActivity extends AppCompatActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.activity_event_pager_view_pager);
 
-        mEvent = EventList.get(this).getEventList();
+        mEvent = DataBase.get(this).getEventList();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {

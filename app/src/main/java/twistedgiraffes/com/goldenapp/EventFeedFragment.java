@@ -15,14 +15,20 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
 import java.text.DateFormat;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by rybailey on 2/27/17.
  */
 
-public class EventFeedFragment extends Fragment {
+public class EventFeedFragment extends Fragment implements DataBase.DataBaseChanged{
 
     private static final String TAG ="EVENT_FEED";
     private static final String LIST_STATE_KEY = "recycler_list_state";
@@ -32,6 +38,13 @@ public class EventFeedFragment extends Fragment {
     private EventAdapter mAdapter;
     private Callbacks mCallbacks;
     private Parcelable mListState;
+
+    private DataBase mDataBase;
+
+    @Override
+    public void itemPosChange(int pos) {
+        mAdapter.notifyItemChanged(pos);
+    }
 
     public interface Callbacks{
          void onEventSelect(Event event);
@@ -82,7 +95,10 @@ public class EventFeedFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mDataBase = DataBase.get(getContext());
+        mDataBase.addListener(this);
     }
+
 
     /**
      * Called to ask the fragment to save its current dynamic state, so it
@@ -189,8 +205,7 @@ public class EventFeedFragment extends Fragment {
              */
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                EventList eventList = EventList.get(getActivity());
-                eventList.delateEventItem(viewHolder.getAdapterPosition());
+                mDataBase.delateEventItem(viewHolder.getAdapterPosition());
                 mAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
             }
         };
@@ -198,7 +213,9 @@ public class EventFeedFragment extends Fragment {
 
         mEventFeedRecyclerView = (RecyclerView) view.findViewById(R.id.content_event_feed_recycler);
         mEventFeedRecyclerView.setHasFixedSize(true);
+        mEventFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mItemTouchHelper.attachToRecyclerView(mEventFeedRecyclerView);
+
         updateUI();
 
         return view;
@@ -212,7 +229,6 @@ public class EventFeedFragment extends Fragment {
                 mEventFeedRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
             }
         } else {
-            mEventFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             //mAdapter.notifyDataSetChanged();
         }
     }
@@ -276,13 +292,9 @@ public class EventFeedFragment extends Fragment {
     }
 
     private class EventAdapter extends RecyclerView.Adapter<EventHolder>{
-        private EventList mEvent;
 
         public EventAdapter(){
-            mEvent = EventList.get(getContext());
-            setHasStableIds(false);
         }
-
 
 
 
@@ -335,7 +347,7 @@ public class EventFeedFragment extends Fragment {
          */
         @Override
         public void onBindViewHolder(EventHolder holder, int position) {
-            Event event = mEvent.getEventList().get(position);
+            Event event = mDataBase.getEventList().get(position);
             holder.bindEvent(event);
         }
 
@@ -346,7 +358,7 @@ public class EventFeedFragment extends Fragment {
          */
         @Override
         public int getItemCount() {
-            return mEvent.size();
+            return mDataBase.size();
         }
 
 
