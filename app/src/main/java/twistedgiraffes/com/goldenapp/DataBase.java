@@ -58,8 +58,7 @@ public class DataBase {
                 try {
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         Event e = child.getValue(Event.class);
-
-                        addOrUpdate(e);
+                        callListeners(addOrUpdate(e));
                     }
                 }
                 catch (com.firebase.client.FirebaseException e){
@@ -121,6 +120,7 @@ public class DataBase {
     }
 
     public void addListener(DataBaseChanged listener){
+        Log.d("***Event:  ", "Listener added.");
         mListeners.add(listener);
     }
 

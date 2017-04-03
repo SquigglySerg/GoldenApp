@@ -43,7 +43,8 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
 
     @Override
     public void itemPosChange(int pos) {
-        updateUI(pos);
+        Log.d("***Event:  ", "ItemPosChange Called in EventFeedFragment");
+        mAdapter.notifyItemInserted(pos);
     }
 
     public interface Callbacks{
@@ -96,6 +97,7 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mDataBase.addListener(this);
     }
 
 
@@ -153,7 +155,6 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
             mListState = null;
         }
 
-        mDataBase.addListener(this);
         ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.END){
             /**
              * Called when ItemTouchHelper wants to move the dragged item from its old position to
@@ -216,12 +217,12 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
         mEventFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mItemTouchHelper.attachToRecyclerView(mEventFeedRecyclerView);
 
-        updateUI(0);
+        updateUI();
 
         return view;
     }
 
-    private void updateUI(int pos){
+    private void updateUI(){
         if(mAdapter == null) {
             mAdapter = new EventAdapter();
             mEventFeedRecyclerView.setAdapter(mAdapter);
@@ -229,7 +230,8 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
                 mEventFeedRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
             }
         } else {
-            mAdapter.notifyItemChanged(pos);
+            //mAdapter.notifyItemInserted();
+            //mAdapter.notifyItemChanged();
         }
     }
 
@@ -293,7 +295,9 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
 
     private class EventAdapter extends RecyclerView.Adapter<EventHolder>{
 
+
         public EventAdapter(){
+
         }
 
 
