@@ -17,45 +17,45 @@ import java.util.UUID;
  * Created by rybailey on 3/8/17.
  */
 
-public class NewsActivity extends AppCompatActivity {
-        private static final String EXTRA_NEWS_ID = "com.csci448.rybailey.news_id";
+public class EventActivity extends AppCompatActivity {
+        private static final String EXTRA_EVENT_ID = "com.csci448.rybailey.event_id";
 
         private ViewPager mViewPager;
-        private List<News> mNews;
+        private List<Event> mEvent;
 
     public static Intent newIntent(Context packageContext, UUID crimeId){
-        Intent intent = new Intent(packageContext, NewsActivity.class);
-        intent.putExtra(EXTRA_NEWS_ID, crimeId);
+        Intent intent = new Intent(packageContext, EventActivity.class);
+        intent.putExtra(EXTRA_EVENT_ID, crimeId);
         return intent;
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_pager);
+        setContentView(R.layout.activity_event_pager);
 
-        UUID newsId = (UUID) getIntent().getSerializableExtra(EXTRA_NEWS_ID);
+        UUID eventId = (UUID) getIntent().getSerializableExtra(EXTRA_EVENT_ID);
 
-        mViewPager = (ViewPager) findViewById(R.id.activity_news_pager_view_pager);
+        mViewPager = (ViewPager) findViewById(R.id.activity_event_pager_view_pager);
 
-        mNews = NewsList.get(this).getNewsList();
+        mEvent = EventList.get(this).getEventList();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
             @Override
             public Fragment getItem(int position) {
-                News news = mNews.get(position);
-                return NewsFragment.newInstance(news.getId());
+                Event event = mEvent.get(position);
+                return EventFragment.newInstance(event.getId());
             }
 
             @Override
             public int getCount() {
-                return mNews.size();
+                return mEvent.size();
             }
         });
 
-        for (int i = 0; i < mNews.size(); i++){
-            if (mNews.get(i).getId().equals(newsId)){
+        for (int i = 0; i < mEvent.size(); i++){
+            if (mEvent.get(i).getId().equals(eventId)){
                 mViewPager.setCurrentItem(i);
                 break;
             }

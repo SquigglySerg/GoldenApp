@@ -5,7 +5,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/content_news_feed_recycler"
+        android:id="@+id/content_event_feed_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusable="false"
@@ -14,5 +14,5 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="twistedgiraffes.com.goldenapp.NewsFeedFragment">
+        tools:context="twistedgiraffes.com.goldenapp.EventFeedFragment">
     </android.support.v7.widget.RecyclerView>

@@ -20,15 +20,15 @@ import com.firebase.client.ValueEventListener;
 
 import java.util.HashMap;
 
-public class NewsFeed extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, NewsFeedFragment.Callbacks {
+public class EventFeed extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, EventFeedFragment.Callbacks {
     private static final String FIREBASE_URL = "https://banded-charmer-160001.firebaseio.com/";
     private HashMap<String, Event> events;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_news_feed);
+        setContentView(R.layout.activity_event_feed);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -46,11 +46,11 @@ public class NewsFeed extends AppCompatActivity
         initializeFireBase();
 
         FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.news_feed);
+        Fragment fragment = fm.findFragmentById(R.id.event_feed);
 
         if (fragment == null){
-            fragment = new NewsFeedFragment();
-            fm.beginTransaction().add(R.id.news_feed,fragment).commit();
+            fragment = new EventFeedFragment();
+            fm.beginTransaction().add(R.id.event_feed,fragment).commit();
         }
     }
 
@@ -86,8 +86,8 @@ public class NewsFeed extends AppCompatActivity
     }
 
     @Override
-    public void onNewsSelect(News news) {
-        Intent intent = NewsActivity.newIntent(this, news.getId());
+    public void onEventSelect(Event event) {
+        Intent intent = EventActivity.newIntent(this, event.getId());
         startActivity(intent);
     }
 

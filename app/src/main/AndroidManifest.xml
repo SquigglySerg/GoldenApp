@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".NewsFeed"
+            android:name=".EventFeed"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -26,9 +26,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewsActivity"
+        <activity android:name=".EventActivity"
                   android:label="@string/app_name"
-                  android:parentActivityName=".NewsFeed">
+                  android:parentActivityName=".EventFeed">
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

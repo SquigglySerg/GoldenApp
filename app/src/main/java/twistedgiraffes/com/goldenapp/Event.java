@@ -1,5 +1,7 @@
 package twistedgiraffes.com.goldenapp;
 
+import java.util.UUID;
+
 /**
  * Created by Sergio on 3/18/2017.
  */
@@ -12,6 +14,16 @@ public class Event {
     private String Location;
     private Double Lat;
     private Double Lng;
+    private UUID mId;
+    private boolean mToogle;
+
+    public boolean getToogle() {
+        return mToogle;
+    }
+
+    public void setToogle(boolean toogle) {
+        mToogle = toogle;
+    }
 
     public String getTitle() {
         return Title;
@@ -69,6 +81,10 @@ public class Event {
         Lng = lng;
     }
 
+    public UUID getId() {
+        return mId;
+    }
+
     public Event(String title, String description, String time, String date, String location, Double lat, Double lng) {
         Title = title;
         Description = description;
@@ -77,9 +93,13 @@ public class Event {
         Location = location;
         Lat = lat;
         Lng = lng;
+        mId = UUID.randomUUID();
+        mToogle = false;
     }
 
     public Event() {
+        mId = UUID.randomUUID();
+        mToogle = false;
         //Required by Firebase for some weird reason.
     }
 }

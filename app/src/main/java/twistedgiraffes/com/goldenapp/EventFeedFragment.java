@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -13,33 +12,29 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by rybailey on 2/27/17.
  */
 
-public class NewsFeedFragment extends Fragment {
+public class EventFeedFragment extends Fragment {
 
-    private static final String TAG ="NEWS_FEED";
+    private static final String TAG ="EVENT_FEED";
     private static final String LIST_STATE_KEY = "recycler_list_state";
 
-    private RecyclerView mNewsFeedRecyclerView;
+    private RecyclerView mEventFeedRecyclerView;
     private ItemTouchHelper mItemTouchHelper;
-    private NewsAdapter mAdapter;
+    private EventAdapter mAdapter;
     private Callbacks mCallbacks;
     private Parcelable mListState;
 
     public interface Callbacks{
-         void onNewsSelect(News news);
+         void onEventSelect(Event event);
     }
 
 
@@ -111,7 +106,7 @@ public class NewsFeedFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(LIST_STATE_KEY, mNewsFeedRecyclerView.getLayoutManager().onSaveInstanceState());
+        outState.putParcelable(LIST_STATE_KEY, mEventFeedRecyclerView.getLayoutManager().onSaveInstanceState());
     }
 
     /**
@@ -135,7 +130,7 @@ public class NewsFeedFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.content_news_feed, container, false);
+        View view = inflater.inflate(R.layout.content_event_feed, container, false);
 
         if (savedInstanceState != null){
             mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
@@ -194,17 +189,17 @@ public class NewsFeedFragment extends Fragment {
              */
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                NewsList newsList = NewsList.get(getActivity());
-                newsList.delateNewsItem(viewHolder.getAdapterPosition());
+                EventList eventList = EventList.get(getActivity());
+                eventList.delateEventItem(viewHolder.getAdapterPosition());
                 mAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
             }
         };
         mItemTouchHelper = new ItemTouchHelper(callback);
 
-        mNewsFeedRecyclerView = (RecyclerView) view.findViewById(R.id.content_news_feed_recycler);
-        mNewsFeedRecyclerView.setHasFixedSize(true);
-        mNewsFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mItemTouchHelper.attachToRecyclerView(mNewsFeedRecyclerView);
+        mEventFeedRecyclerView = (RecyclerView) view.findViewById(R.id.content_event_feed_recycler);
+        mEventFeedRecyclerView.setHasFixedSize(true);
+        mEventFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mItemTouchHelper.attachToRecyclerView(mEventFeedRecyclerView);
 
         updateUI();
 
@@ -213,10 +208,10 @@ public class NewsFeedFragment extends Fragment {
 
     private void updateUI(){
         if(mAdapter == null) {
-            mAdapter = new NewsAdapter();
-            mNewsFeedRecyclerView.setAdapter(mAdapter);
+            mAdapter = new EventAdapter();
+            mEventFeedRecyclerView.setAdapter(mAdapter);
             if (mListState != null){
-                mNewsFeedRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
+                mEventFeedRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
             }
         } else {
             //mAdapter.notifyDataSetChanged();
@@ -233,33 +228,33 @@ public class NewsFeedFragment extends Fragment {
         super.onPause();
     }
 
-    private class NewsHolder extends RecyclerView.ViewHolder
+    private class EventHolder extends RecyclerView.ViewHolder
         implements View.OnClickListener{
         private TextView mTitleTextView;
         private TextView mDateTextView;
         private TextView mFullStory;
-        private News mNews;
+        private Event mEvent;
 
-        public NewsHolder(View itemView){
+        public EventHolder(View itemView){
             super(itemView);
             itemView.setOnClickListener(this);
-            mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_news_headline);
-            mDateTextView = (TextView) itemView.findViewById(R.id.list_item_news_date);
+            mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_event_headline);
+            mDateTextView = (TextView) itemView.findViewById(R.id.list_item_event_date);
             mFullStory = (TextView) itemView.findViewById(R.id.list_item_full_story);
         }
 
-        public void bindNews(News news){
-            mNews = news;
-            mTitleTextView.setText(mNews.getHeadline());
-            String stringDate = DateFormat.getDateInstance().format(mNews.getDate());
+        public void bindEvent(Event event){
+            mEvent = event;
+            mTitleTextView.setText(mEvent.getTitle());
+            String stringDate = DateFormat.getDateInstance().format(mEvent.getDate());
             mDateTextView.setText(stringDate);
-            mFullStory.setText(mNews.getFullStory());
+            mFullStory.setText(mEvent.getDescription());
             updateTextBox();
         }
 
         private void updateTextBox(){
-            if (mNews != null){
-                if (mNews.getToogle()){
+            if (mEvent != null){
+                if (mEvent.getToogle()){
                     mFullStory.setVisibility(View.VISIBLE);
                 } else {
                     mFullStory.setVisibility(View.GONE);
@@ -274,19 +269,19 @@ public class NewsFeedFragment extends Fragment {
          */
         @Override
         public void onClick(View v) {
-            //mCallbacks.onNewsSelect(mNews);
-            mNews.setToogle(!mNews.getToogle());
+            //mCallbacks.onEventSelect(mEvent);
+            mEvent.setToogle(!mEvent.getToogle());
             updateTextBox();
             Log.i(TAG, "Full Text was toogled");
             mAdapter.notifyItemChanged(getAdapterPosition());
         }
     }
 
-    private class NewsAdapter extends RecyclerView.Adapter<NewsHolder>{
-        private NewsList mNews;
+    private class EventAdapter extends RecyclerView.Adapter<EventHolder>{
+        private EventList mEvent;
 
-        public NewsAdapter(){
-            mNews = NewsList.get(getContext());
+        public EventAdapter(){
+            mEvent = EventList.get(getContext());
             setHasStableIds(false);
         }
 
@@ -314,10 +309,10 @@ public class NewsFeedFragment extends Fragment {
          * @see #onBindViewHolder(ViewHolder, int)
          */
         @Override
-        public NewsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public EventHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-            View view = layoutInflater.inflate(R.layout.list_item_news, parent, false);
-            return new NewsHolder(view);
+            View view = layoutInflater.inflate(R.layout.list_item_event, parent, false);
+            return new EventHolder(view);
         }
 
         /**
@@ -341,9 +336,9 @@ public class NewsFeedFragment extends Fragment {
          * @param position The position of the item within the adapter's data set.
          */
         @Override
-        public void onBindViewHolder(NewsHolder holder, int position) {
-            News news = mNews.getNewsList().get(position);
-            holder.bindNews(news);
+        public void onBindViewHolder(EventHolder holder, int position) {
+            Event event = mEvent.getEventList().get(position);
+            holder.bindEvent(event);
         }
 
         /**
@@ -353,23 +348,10 @@ public class NewsFeedFragment extends Fragment {
          */
         @Override
         public int getItemCount() {
-            return mNews.size();
+            return mEvent.size();
         }
 
 
-
-        /**
-         * Return the stable ID for the item at <code>position</code>. If {@link #hasStableIds()}
-         * would return false this method should return {@link #NO_ID}. The default implementation
-         * of this method returns {@link #NO_ID}.
-         *
-         * @param position Adapter position to query
-         * @return the stable ID of the item at position
-         */
-        @Override
-        public long getItemId(int position) {
-            return mNews.getSessionIdFromPosition(position);
-        }
     }
 
 

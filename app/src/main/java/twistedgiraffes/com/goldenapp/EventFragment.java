@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.UUID;
@@ -15,19 +14,19 @@ import java.util.UUID;
  * Created by rybailey on 3/8/17.
  */
 
-public class NewsFragment extends Fragment {
-    private static final String ARG_NEWS_ID = "news_id";
+public class EventFragment extends Fragment {
+    private static final String ARG_EVENT_ID = "event_id";
 
-    private News mNews;
+    private Event mEvent;
     private TextView mTitle;
     private TextView mDate;
     private TextView mFullStory;
 
-    public static NewsFragment newInstance(UUID crimeId){
+    public static EventFragment newInstance(UUID crimeId){
         Bundle args = new Bundle();
-        args.putSerializable(ARG_NEWS_ID, crimeId);
+        args.putSerializable(ARG_EVENT_ID, crimeId);
 
-        NewsFragment fragment = new NewsFragment();
+        EventFragment fragment = new EventFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,8 +51,8 @@ public class NewsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UUID newsId = (UUID) getArguments().getSerializable(ARG_NEWS_ID);
-        mNews = NewsList.get(getActivity()).getNews(newsId);
+        UUID eventId = (UUID) getArguments().getSerializable(ARG_EVENT_ID);
+        mEvent = EventList.get(getActivity()).getEvent(eventId);
     }
 
     /**
@@ -77,15 +76,15 @@ public class NewsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.news_full_page,container,false);
+        View v = inflater.inflate(R.layout.event_full_page,container,false);
 
         mTitle = (TextView) v.findViewById(R.id.full_page_title);
         mDate = (TextView) v.findViewById(R.id.full_page_date);
         mFullStory = (TextView) v.findViewById(R.id.full_page_text);
 
-        mTitle.setText(mNews.getHeadline());
-        mDate.setText(mNews.getDate().toString());
-        mFullStory.setText(mNews.getFullStory());
+        mTitle.setText(mEvent.getTitle());
+        mDate.setText(mEvent.getDate());
+        mFullStory.setText(mEvent.getDescription());
         return v;
     }
 }
