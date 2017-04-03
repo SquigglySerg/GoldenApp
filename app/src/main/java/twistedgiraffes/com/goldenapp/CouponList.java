@@ -38,4 +38,5 @@ public class CouponList {
     public List<Coupon> getCoupons() {
         return mCoupons;
     }
+
 }
