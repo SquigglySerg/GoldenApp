@@ -26,6 +26,10 @@ public class DataBase {
     public List<Event> mLocalList;
     private List<DataBaseChanged> mListeners;
 
+    public void clearListeners() {
+        mListeners.clear();
+    }
+
     interface DataBaseChanged{
         void itemPosChange(int pos);
     }

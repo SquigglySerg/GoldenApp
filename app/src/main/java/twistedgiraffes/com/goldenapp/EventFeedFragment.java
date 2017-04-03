@@ -43,7 +43,7 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
 
     @Override
     public void itemPosChange(int pos) {
-        mAdapter.notifyItemChanged(pos);
+        updateUI(pos);
     }
 
     public interface Callbacks{
@@ -63,6 +63,7 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mCallbacks = (Callbacks) activity;
+        mDataBase.addListener((DataBase.DataBaseChanged) this);
     }
 
     /**
@@ -73,6 +74,7 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
     public void onDetach() {
         super.onDetach();
         mCallbacks = null;
+        mDataBase.clearListeners();
     }
 
     /**
@@ -96,7 +98,6 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDataBase = DataBase.get(getContext());
-        mDataBase.addListener(this);
     }
 
 
@@ -216,12 +217,12 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
         mEventFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mItemTouchHelper.attachToRecyclerView(mEventFeedRecyclerView);
 
-        updateUI();
+        updateUI(0);
 
         return view;
     }
 
-    private void updateUI(){
+    private void updateUI(int pos){
         if(mAdapter == null) {
             mAdapter = new EventAdapter();
             mEventFeedRecyclerView.setAdapter(mAdapter);
@@ -229,7 +230,7 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
                 mEventFeedRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
             }
         } else {
-            //mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemChanged(pos);
         }
     }
 
