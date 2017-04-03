@@ -42,8 +42,14 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
     private DataBase mDataBase = DataBase.get(getContext());
 
     @Override
-    public void itemPosChange(int pos) {
-        Log.d("***Event:  ", "ItemPosChange Called in EventFeedFragment");
+    public void itemAtPosChanged(int pos) {
+        Log.d("***Event:  ", "ItemAtPosChanged Called in EventFeedFragment");
+        mAdapter.notifyItemChanged(pos);
+    }
+
+    @Override
+    public void itemAddedAt(int pos) {
+        Log.d("***Event:  ", "ItemAddedAt Called in EventFeedFragment");
         mAdapter.notifyItemInserted(pos);
     }
 

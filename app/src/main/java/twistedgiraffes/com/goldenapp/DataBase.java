@@ -18,9 +18,11 @@ import java.util.UUID;
  */
 
 public class DataBase {
-    private static final String FIREBASE_URL = "https://banded-charmer-160001.firebaseio.com/";
-    private HashMap<String, Event> events;
     private static DataBase sDataBase;
+    private static final String FIREBASE_URL = "https://banded-charmer-160001.firebaseio.com/";
+
+
+    private HashMap<String, Event> events;
     private Context mContext;
 
     public List<Event> mLocalList;
@@ -31,7 +33,8 @@ public class DataBase {
     }
 
     interface DataBaseChanged{
-        void itemPosChange(int pos);
+        void itemAtPosChanged(int pos);
+        void itemAddedAt(int pos);
     }
 
     public static DataBase get(Context context){
@@ -58,7 +61,7 @@ public class DataBase {
                 try {
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         Event e = child.getValue(Event.class);
-                        callListeners(addOrUpdate(e));
+                        addOrUpdate(e);
                     }
                 }
                 catch (com.firebase.client.FirebaseException e){
@@ -86,16 +89,21 @@ public class DataBase {
         eventRef.setValue(e2);
     }
 
-    public int addOrUpdate(Event e){
+    public void addOrUpdate(Event e){
         Log.d("***Event:  ", e.getTitle() + " added.");
         for(int i = 0; i < mLocalList.size(); i++){
             if (mLocalList.get(i).getId().equals(e.getId())) {
                 mLocalList.set(i,e);
-                return i;
+                for (DataBaseChanged listener : mListeners){
+                    listener.itemAtPosChanged(i);
+                }
+                return;
             }
         }
         mLocalList.add(e);
-        return mLocalList.size() - 1;
+        for (DataBaseChanged listener : mListeners){
+            listener.itemAddedAt(mLocalList.size() - 1);
+        }
     }
 
     public List<Event> getEventList() {
@@ -113,6 +121,7 @@ public class DataBase {
 
     public void delateEventItem(int position){
         mLocalList.remove(position);
+
     }
 
     public int size(){
@@ -124,9 +133,4 @@ public class DataBase {
         mListeners.add(listener);
     }
 
-    private void callListeners(int pos){
-        for (DataBaseChanged listener : mListeners){
-            listener.itemPosChange(pos);
-        }
-    }
 }
