@@ -18,7 +18,8 @@ import java.util.UUID;
  */
 
 public class EventActivity extends AppCompatActivity {
-        private static final String EXTRA_EVENT_ID = "com.csci448.rybailey.event_id";
+        private static final String EXTRA_EVENT_ID = "twistedgiraffes.com.goldenapp.event_id";
+
 
         private ViewPager mViewPager;
         private List<Event> mEvent;

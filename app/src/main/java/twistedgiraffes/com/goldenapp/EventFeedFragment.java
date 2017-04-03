@@ -246,8 +246,7 @@ public class EventFeedFragment extends Fragment {
         public void bindEvent(Event event){
             mEvent = event;
             mTitleTextView.setText(mEvent.getTitle());
-            String stringDate = DateFormat.getDateInstance().format(mEvent.getDate());
-            mDateTextView.setText(stringDate);
+            mDateTextView.setText(mEvent.getDate());
             mFullStory.setText(mEvent.getDescription());
             updateTextBox();
         }
