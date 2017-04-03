@@ -44,7 +44,7 @@ public class DataBase {
     private DataBase(Context context){
         mContext = context;
         mLocalList = new ArrayList<>();
-        mLocalList = new ArrayList<>();
+        mListeners = new ArrayList<>();
         events = new HashMap<>();
         initializeFireBase();
     }

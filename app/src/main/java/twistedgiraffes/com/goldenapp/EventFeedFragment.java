@@ -39,7 +39,7 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
     private Callbacks mCallbacks;
     private Parcelable mListState;
 
-    private DataBase mDataBase;
+    private DataBase mDataBase = DataBase.get(getContext());
 
     @Override
     public void itemPosChange(int pos) {
@@ -63,7 +63,6 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mCallbacks = (Callbacks) activity;
-        mDataBase.addListener((DataBase.DataBaseChanged) this);
     }
 
     /**
@@ -97,7 +96,6 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDataBase = DataBase.get(getContext());
     }
 
 
@@ -155,6 +153,7 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
             mListState = null;
         }
 
+        mDataBase.addListener(this);
         ItemTouchHelper.SimpleCallback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.END){
             /**
              * Called when ItemTouchHelper wants to move the dragged item from its old position to
