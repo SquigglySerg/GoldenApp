@@ -198,9 +198,7 @@ public class EventFeedFragment extends Fragment {
 
         mEventFeedRecyclerView = (RecyclerView) view.findViewById(R.id.content_event_feed_recycler);
         mEventFeedRecyclerView.setHasFixedSize(true);
-        mEventFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mItemTouchHelper.attachToRecyclerView(mEventFeedRecyclerView);
-
         updateUI();
 
         return view;
@@ -214,6 +212,7 @@ public class EventFeedFragment extends Fragment {
                 mEventFeedRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
             }
         } else {
+            mEventFeedRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             //mAdapter.notifyDataSetChanged();
         }
     }

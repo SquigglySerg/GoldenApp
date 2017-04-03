@@ -24,6 +24,7 @@ public class EventFeedActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, EventFeedFragment.Callbacks {
     private static final String FIREBASE_URL = "https://banded-charmer-160001.firebaseio.com/";
     private HashMap<String, Event> events;
+    private EventList mList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,8 @@ public class EventFeedActivity extends AppCompatActivity
         setContentView(R.layout.activity_event_feed);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mList = EventList.get(getApplicationContext());
 
         events = new HashMap<>();
 
@@ -44,6 +47,8 @@ public class EventFeedActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         initializeFireBase();
+
+
 
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.event_feed);
@@ -102,8 +107,8 @@ public class EventFeedActivity extends AppCompatActivity
                     for (DataSnapshot child : dataSnapshot.getChildren()) {
                         Event e = child.getValue(Event.class);
 
-                        Log.d("***Event:  ", e.getTitle() + " added.");
-                        events.put(child.getKey().toString(), e);
+                        events.put(child.getKey(), e);
+                        mList.addOrUpdate(e);
                     }
                 }
                 catch (com.firebase.client.FirebaseException e){

@@ -1,12 +1,13 @@
 package twistedgiraffes.com.goldenapp;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * Created by Sergio on 3/18/2017.
  */
 
-public class Event {
+public class Event implements Serializable {
     private String Title;
     private String Description;
     private String Time;
@@ -83,6 +84,10 @@ public class Event {
 
     public UUID getId() {
         return mId;
+    }
+
+    public void setId(UUID id) {
+        mId = id;
     }
 
     public Event(String title, String description, String time, String date, String location, Double lat, Double lng) {
