@@ -16,6 +16,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final float DEFAULT_ZOOM = 13;
 
     private GoogleMap mMap;
+    private DataBase mDataBase = DataBase.get(getBaseContext());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +44,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Set up map
         // Add a marker in Golden, CO, USA and move the camera to Golden
         LatLng golden = new LatLng(39.7554, -105.2213);
-        Marker goldenMarker = mMap.addMarker(new MarkerOptions().position(golden).title("Event in Golden, CO, USA"));
-
         mMap.moveCamera(CameraUpdateFactory.newLatLng(golden));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(DEFAULT_ZOOM));
 
@@ -56,5 +55,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return true;
             }
         });
+
+        for(Event e : mDataBase.getEventList()){
+            LatLng eLocal = new LatLng(e.getLat(), e.getLng());
+            String eTitle = e.getTitle();
+
+            mMap.addMarker(new MarkerOptions().position(eLocal).title(eTitle));
+        }
     }
 }
