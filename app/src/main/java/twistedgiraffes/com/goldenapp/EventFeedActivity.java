@@ -13,13 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-
-import java.util.HashMap;
-
 public class EventFeedActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, EventFeedFragment.Callbacks {
 
@@ -71,6 +64,9 @@ public class EventFeedActivity extends AppCompatActivity
         if (id == R.id.nav_calendar) {
             // Handle the calender action
             //Log.d("***Num Events:  ", Integer.toString(mDataBase.size()) ); //Using this to get info on the db
+            // +++++++++++++++Log.d("***Num Events:  ", Integer.toString(mDataBase.size()) ); //Using this to get info on the db
+            Intent intent = new Intent(this, CalendarActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_golden_ticket) {
             Intent intent = new Intent(this, TicketActivity.class);
             startActivity(intent);
