@@ -1,6 +1,7 @@
 package twistedgiraffes.com.goldenapp;
 
 import android.content.Context;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,9 @@ import java.util.List;
  */
 
 public class CouponList {
+    public static final String TAG = MapsActivity.class.getSimpleName();
     private static CouponList sCouponList;
+    private GoogleApiClient mClient;
 
     // This is my dummy set of strings
     private String[] mString = {
@@ -30,8 +33,16 @@ public class CouponList {
         return sCouponList;
     }
 
+    /*
+    * I can't get the location in this class cause its not
+    * an activity, will set it in the actual activity
+    * */
     private CouponList(Context context) {
+
         mCoupons = new ArrayList<>();
+        for (String x : mString) {
+            mCoupons.add(new Coupon(x,0,0));
+        }
 
     }
 

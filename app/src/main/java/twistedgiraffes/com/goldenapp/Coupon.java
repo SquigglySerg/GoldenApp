@@ -9,6 +9,12 @@ public class Coupon {
     private double mLat;
     private double mLog;
 
+    public Coupon(String c, double lat, double log) {
+        setmCoupon(c);
+        setmLat(lat);
+        setmLog(log);
+    }
+
     public String getmCoupon() {
         return mCoupon;
     }
