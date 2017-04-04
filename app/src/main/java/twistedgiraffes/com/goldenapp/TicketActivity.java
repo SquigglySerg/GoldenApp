@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ import com.google.android.gms.location.LocationServices;
 public class TicketActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
     private static final String KEY_CLICKED = "clicked";
+    private static final String TAG = "GoldenApp";
 
     // Will need to convert these to mabye on but for now we will use four
     private CheckBox mCheckBox1;
@@ -66,7 +68,6 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
         mList = CouponList.get(this);
 
         // This is our general location
-        mLocation = null;
         try {
             mLocation = LocationServices.FusedLocationApi.getLastLocation(mClient);
         } catch (SecurityException se) {
@@ -79,6 +80,10 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
             if (mLocation != null) {
                 x.setmLat(mLocation.getLatitude());
                 x.setmLog(mLocation.getLongitude());
+            }
+            else {
+                x.setmLat(0);
+                x.setmLog(0);
             }
         }
         // Delete the above when done
@@ -99,14 +104,16 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (mCheckBox1.isChecked()
+                Log.i(TAG, "The lattitude: " + mList.mCoupons.get(0).getmLat());
+                if (mCheckBox1.isChecked() && mLocation != null
                         && mList.mCoupons.get(0).getmLat() == mLocation.getLatitude()
                         && mList.mCoupons.get(0).getmLog() == mLocation.getLongitude()) {
-                    Toast.makeText(TicketActivity.this, mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_LONG);
+                    Toast.makeText(TicketActivity.this, mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_LONG).show();
                     //Toast.makeText(getParentActivityIntent(), mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_SHORT ).show();
                 }
                 else {
-                    Toast.makeText(TicketActivity.this, "There are no events near you.", Toast.LENGTH_LONG);
+                    Toast.makeText(TicketActivity.this, "There are no events near you.", Toast.LENGTH_LONG).show();
+                    mCheckBox1.setChecked(false);
                 }
             }
         });
@@ -114,23 +121,26 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mCheckBox2.setChecked(false);
                 Toast.makeText(TicketActivity.this, "There are no events near you.\n"
                         + " NOTE: This one is designed to fail for the purposes\n"
-                        + " of showing you how it would work in the final version.", Toast.LENGTH_LONG);
+                        + " of showing you how it would work in the final version.", Toast.LENGTH_LONG).show();
+
             }
         });
         mCheckBox3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (mCheckBox3.isChecked()
+                if (mCheckBox3.isChecked() && mLocation != null
                         && mList.mCoupons.get(2).getmLat() == mLocation.getLatitude()
                         && mList.mCoupons.get(2).getmLog() == mLocation.getLongitude()) {
-                    Toast.makeText(TicketActivity.this, mList.mCoupons.get(2).getmCoupon(), Toast.LENGTH_LONG);
+                    Toast.makeText(TicketActivity.this, mList.mCoupons.get(2).getmCoupon(), Toast.LENGTH_LONG).show();
                     //Toast.makeText(getParentActivityIntent(), mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_SHORT ).show();
                 }
                 else {
-                    Toast.makeText(TicketActivity.this, "There are no events near you.", Toast.LENGTH_LONG);
+                    Toast.makeText(TicketActivity.this, "There are no events near you.", Toast.LENGTH_LONG).show();
+                    mCheckBox3.setChecked(false);
                 }
             }
         });
@@ -138,9 +148,10 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mCheckBox4.setChecked(false);
                 Toast.makeText(TicketActivity.this, "There are no events near you.\n"
                         + " NOTE: This one is designed to fail for the purposes\n"
-                        + " of showing you how it would work in the final version.", Toast.LENGTH_LONG);
+                        + " of showing you how it would work in the final version.", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -161,4 +172,6 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    //This is for the toast
 }

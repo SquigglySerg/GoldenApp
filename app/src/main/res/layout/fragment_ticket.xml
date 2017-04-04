@@ -4,73 +4,81 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+
+    <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <CheckBox
             android:id="@+id/ticket_checkbox1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"/>
-        <ImageButton
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/golden_ticket"
             android:layout_toLeftOf="@+id/ticket_checkbox1"
             android:adjustViewBounds="true"/>
-    </RelativeLayout>
 
-    <RelativeLayout
+    </LinearLayout>
+
+
+    <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <CheckBox
             android:id="@+id/ticket_checkbox2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"/>
-        <ImageButton
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/golden_ticket"
             android:layout_toLeftOf="@+id/ticket_checkbox2"
             android:adjustViewBounds="true"/>
-    </RelativeLayout>
 
-    <RelativeLayout
+    </LinearLayout>
+
+
+
+    <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <CheckBox
             android:id="@+id/ticket_checkbox3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"/>
-        <ImageButton
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/golden_ticket"
             android:layout_toLeftOf="@+id/ticket_checkbox3"
             android:adjustViewBounds="true"/>
-    </RelativeLayout>
 
-    <RelativeLayout
+    </LinearLayout>
+
+    <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <CheckBox
             android:id="@+id/ticket_checkbox4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"/>
-        <ImageButton
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/golden_ticket"
             android:layout_toLeftOf="@+id/ticket_checkbox4"
             android:adjustViewBounds="true"/>
-    </RelativeLayout>
+
+    </LinearLayout>
 
 
 
