@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -37,15 +39,22 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
         GoogleApiClient.OnConnectionFailedListener {
     private static final String KEY_CLICKED = "clicked";
 
+    // Will need to convert these to mabye on but for now we will use four
     private CheckBox mCheckBox1;
+    private CheckBox mCheckBox2;
+    private CheckBox mCheckBox3;
+    private CheckBox mCheckBox4;
+
     private GoogleApiClient mClient;
+    private CouponList mList;
+    private Location mLocation;
 
     private boolean mChecked = false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_ticket);
+
         mClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -53,14 +62,89 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
                 .build();
         mClient.connect();
 
+        // Get the list of coupouns.
+        mList = CouponList.get(this);
+
         // This is our general location
-        Location mlocation = LocationServices.FusedLocationApi.getLastLocation(mClient);
+        mLocation = null;
+        try {
+            mLocation = LocationServices.FusedLocationApi.getLastLocation(mClient);
+        } catch (SecurityException se) {
 
-
-        mCheckBox1 = (CheckBox) findViewById( R.id.ticket_checkbox );
-        if (mCheckBox1.isChecked()) {
-            mChecked = true;
         }
+
+        // Will need to be removed when we get the database for them
+        // Fill in the list of counpons with their new locations.
+        for (Coupon x : mList.mCoupons) {
+            if (mLocation != null) {
+                x.setmLat(mLocation.getLatitude());
+                x.setmLog(mLocation.getLongitude());
+            }
+        }
+        // Delete the above when done
+
+        // Define the four different checkboxes
+        mCheckBox1 = (CheckBox) findViewById( R.id.ticket_checkbox1 );
+        mCheckBox2 = (CheckBox) findViewById( R.id.ticket_checkbox2 );
+        mCheckBox3 = (CheckBox) findViewById( R.id.ticket_checkbox3 );
+        mCheckBox4 = (CheckBox) findViewById( R.id.ticket_checkbox4 );
+
+        /*
+        *
+        * NOTE: In the final version we will be adding a delta for how
+        *       far they will be allowed to get the ticket
+        *
+        * */
+        mCheckBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mCheckBox1.isChecked()
+                        && mList.mCoupons.get(0).getmLat() == mLocation.getLatitude()
+                        && mList.mCoupons.get(0).getmLog() == mLocation.getLongitude()) {
+                    Toast.makeText(TicketActivity.this, mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_LONG);
+                    //Toast.makeText(getParentActivityIntent(), mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_SHORT ).show();
+                }
+                else {
+                    Toast.makeText(TicketActivity.this, "There are no events near you.", Toast.LENGTH_LONG);
+                }
+            }
+        });
+        mCheckBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Toast.makeText(TicketActivity.this, "There are no events near you.\n"
+                        + " NOTE: This one is designed to fail for the purposes\n"
+                        + " of showing you how it would work in the final version.", Toast.LENGTH_LONG);
+            }
+        });
+        mCheckBox3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mCheckBox3.isChecked()
+                        && mList.mCoupons.get(2).getmLat() == mLocation.getLatitude()
+                        && mList.mCoupons.get(2).getmLog() == mLocation.getLongitude()) {
+                    Toast.makeText(TicketActivity.this, mList.mCoupons.get(2).getmCoupon(), Toast.LENGTH_LONG);
+                    //Toast.makeText(getParentActivityIntent(), mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_SHORT ).show();
+                }
+                else {
+                    Toast.makeText(TicketActivity.this, "There are no events near you.", Toast.LENGTH_LONG);
+                }
+            }
+        });
+        mCheckBox4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Toast.makeText(TicketActivity.this, "There are no events near you.\n"
+                        + " NOTE: This one is designed to fail for the purposes\n"
+                        + " of showing you how it would work in the final version.", Toast.LENGTH_LONG);
+            }
+        });
+
+
     }
 
     @Override

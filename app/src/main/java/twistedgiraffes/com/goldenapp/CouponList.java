@@ -24,7 +24,7 @@ public class CouponList {
     };
 
     // Remove above when database is implemented
-    private List<Coupon> mCoupons;
+    public List<Coupon> mCoupons;
 
     public static CouponList get(Context context) {
         if (sCouponList == null) {
