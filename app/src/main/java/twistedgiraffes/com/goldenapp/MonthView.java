@@ -63,6 +63,7 @@ public class MonthView extends TableLayout{
                         if(events[day] != null){
                             Toast toast = Toast.makeText(getContext(), events[day].getTitle(), Toast.LENGTH_SHORT);
                             toast.show();
+
                         }
                     }
                     else

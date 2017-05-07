@@ -8,6 +8,7 @@ import java.util.UUID;
  */
 
 public class Event implements Serializable {
+    //Database synced elements
     private String Title;
     private String Description;
     private String Time;
@@ -16,6 +17,8 @@ public class Event implements Serializable {
     private Double Lat;
     private Double Lng;
     private UUID mId;
+
+    //Local variables that are not synced
     private boolean mToogle;
 
     public boolean getToogle() {

@@ -8,9 +8,14 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -32,6 +37,29 @@ public class DataBase {
         mListeners.clear();
     }
 
+    public long getNewestEventTime() {
+        DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
+        Date newestDate = null;
+        for (Event event : mLocalList){
+            try {
+                Date date = format.parse(event.getDate());
+                if (newestDate == null){
+                    newestDate = date;
+                } else {
+                    if (date.before(newestDate)){
+                        newestDate=date;
+                    }
+                }
+            } catch (ParseException e) {
+                Log.e("Calender", "Failed to pare date form event: " + event.getTitle());
+            }
+        }
+        if (newestDate == null){
+            newestDate = new Date();
+        }
+        return newestDate.getTime();
+    }
+
     interface DataBaseChanged{
         void itemAtPosChanged(int pos);
         void itemAddedAt(int pos);
@@ -43,6 +71,7 @@ public class DataBase {
         }
         return sDataBase;
     }
+
 
     private DataBase(Context context){
         mContext = context;
