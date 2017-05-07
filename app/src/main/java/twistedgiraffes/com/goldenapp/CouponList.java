@@ -13,7 +13,6 @@ import java.util.List;
 public class CouponList {
     public static final String TAG = MapsActivity.class.getSimpleName();
     private static CouponList sCouponList;
-    private GoogleApiClient mClient;
 
     // This is my dummy set of strings
     private String[] mString = {
@@ -22,6 +21,22 @@ public class CouponList {
             "You won $200 in cash",
             "5% Your next one night stay at The Dove Inn Bed and Breakfast"
     };
+
+
+    // These will be our dummy lognitudes and lattidutes
+    private double[] longnit = {
+            -105.220927,
+            -105.207729,
+            -105.219577,
+            -105.209163
+    };
+    private double[] latt = {
+            39.738716,
+            39.755644,
+            39.739179,
+            39.755778
+    };
+
 
     // Remove above when database is implemented
     public List<Coupon> mCoupons;
@@ -40,8 +55,13 @@ public class CouponList {
     private CouponList(Context context) {
 
         mCoupons = new ArrayList<>();
+        /*
         for (String x : mString) {
             mCoupons.add(new Coupon(x,0,0));
+        }
+        */
+        for (int i = 0; i < mString.length; ++i) {
+            mCoupons.add(new Coupon(mString[i],latt[i],longnit[i]));
         }
 
     }

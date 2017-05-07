@@ -1,6 +1,9 @@
 package twistedgiraffes.com.goldenapp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,8 +15,21 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by michael on 3/3/2017.
@@ -48,8 +64,9 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
     private CheckBox mCheckBox4;
 
     private GoogleApiClient mClient;
+    private GoogleMap mMap;
     private CouponList mList;
-    private Location mLocation;
+    private Location mCurrentLocation;
 
     private boolean mChecked1 = false;
     private boolean mChecked2 = false;
@@ -59,34 +76,64 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
         setContentView(R.layout.fragment_ticket);
 
         mClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
-                .build();
-        mClient.connect();
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle bundle) {
+                        Log.d(TAG, "GoogleApiClient onConnected()");
+                        findLocation();
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int i) {
+                        Log.d(TAG, "GoogleApiClient onConnectionSuspended()");
+                    }
+                }).build();
+
+        /*
+        getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+                updateUI();
+            }
+        });
+        */
+
+        // This is to set our current location so we don't have to worry about null pointers
+        // mCurrentLocation.setLatitude(0);
+        // mCurrentLocation.setLongitude(0);
+        // mClient.connect();
+        //findLocation();
 
         // Get the list of coupouns.
         mList = CouponList.get(this);
 
+        /*
         // This is our general location
         try {
-            mLocation = LocationServices.FusedLocationApi.getLastLocation(mClient);
+            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mClient);
         } catch (SecurityException se) {
 
         }
+        */
 
         // Will need to be removed when we get the database for them
         // Fill in the list of counpons with their new locations.
+        /*
         for (Coupon x : mList.mCoupons) {
-            if (mLocation != null) {
-                x.setmLat(mLocation.getLatitude());
-                x.setmLog(mLocation.getLongitude());
+            if (mCurrentLocation != null) {
+                x.setmLat(mCurrentLocation.getLatitude());
+                x.setmLog(mCurrentLocation.getLongitude());
+                Log.i(TAG, "The lattitude: " + mCurrentLocation.getLatitude() + " Long: " + mCurrentLocation.getLongitude());
             }
             else {
+                Log.i(TAG, "STill null");
                 x.setmLat(0);
                 x.setmLog(0);
             }
         }
+        */
         // Delete the above when done
 
         // Define the four different checkboxes
@@ -105,10 +152,15 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.i(TAG, "The lattitude: " + mList.mCoupons.get(0).getmLat());
-                if (mCheckBox1.isChecked() && !mChecked1)/* && mLocation != null
-                        && mList.mCoupons.get(0).getmLat() == mLocation.getLatitude()
-                        && mList.mCoupons.get(0).getmLog() == mLocation.getLongitude())*/ {
+                findLocation();
+                try {
+                    Log.i(TAG, "The lattitude: " + mCurrentLocation.getLatitude() + " Long: " + mCurrentLocation.getLongitude());
+                } catch (NullPointerException np) {
+                    Log.e(TAG, "Its a null");
+                }
+                if (mCheckBox1.isChecked() && !mChecked1)/* && mCurrentLocation != null
+                        && mList.mCoupons.get(0).getmLat() == mCurrentLocation.getLatitude()
+                        && mList.mCoupons.get(0).getmLog() == mCurrentLocation.getLongitude())*/ {
                     Toast.makeText(TicketActivity.this, mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_LONG).show();
                     mChecked1 = true;
                     //Toast.makeText(getParentActivityIntent(), mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_SHORT ).show();
@@ -126,6 +178,7 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                findLocation();
                 mCheckBox2.setChecked(false);
                 Toast.makeText(TicketActivity.this, "There are no events near you.\n"
                         + " NOTE: This one is designed to fail for the purposes\n"
@@ -137,9 +190,10 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (mCheckBox3.isChecked())/* && mLocation != null
-                        && mList.mCoupons.get(2).getmLat() == mLocation.getLatitude()
-                        && mList.mCoupons.get(2).getmLog() == mLocation.getLongitude())*/ {
+                findLocation();
+                if (mCheckBox3.isChecked())/* && mCurrentLocation != null
+                        && mList.mCoupons.get(2).getmLat() == mCurrentLocation.getLatitude()
+                        && mList.mCoupons.get(2).getmLog() == mCurrentLocation.getLongitude())*/ {
                     Toast.makeText(TicketActivity.this, mList.mCoupons.get(2).getmCoupon(), Toast.LENGTH_LONG).show();
                     mChecked2 = true;
                     //Toast.makeText(getParentActivityIntent(), mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_SHORT ).show();
@@ -157,6 +211,7 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                findLocation();
                 mCheckBox4.setChecked(false);
                 Toast.makeText(TicketActivity.this, "There are no events near you.\n"
                         + " NOTE: This one is designed to fail for the purposes\n"
@@ -167,7 +222,54 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
 
+        mClient.connect();
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        mClient.disconnect();
+    }
+
+    private void findLocation() {
+        LocationRequest request = LocationRequest.create();
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        request.setNumUpdates(1);
+        request.setInterval(0);
+        try {
+            LocationServices.FusedLocationApi
+                    .requestLocationUpdates(mClient, request, new LocationListener() {
+                        @Override
+                        public void onLocationChanged(Location location) {
+                            Log.i(TAG, "Got a fix: " + location);
+                            new SearchTask().execute(location);
+                        }
+                    });
+        } catch (SecurityException se) {
+            Log.e(TAG, "Problem with FusedLocationApi", se);
+        }
+    }
+
+    // This is copied from the LoctarFragment
+    private class SearchTask extends AsyncTask<Location,Void,Void> {
+
+        private Location mLocation;
+
+        @Override
+        protected Void doInBackground(Location... params) {
+            mLocation = params[0];
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            mCurrentLocation = mLocation;
+        }
+    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -183,5 +285,39 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    /*
+    private void updateUI() {
+        if (mMap == null || mMapImage == null) {
+            return;
+        }
+
+        LatLng itemPoint = new LatLng(mMapItem.getmLat(), mMapItem.getmLon());
+        //LatLng itemPoint = new LatLng(mMapItem.getmLon(), mMapItem.getmLat());
+        LatLng myPoint = new LatLng(
+                mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+
+        BitmapDescriptor itemBitmap = BitmapDescriptorFactory.fromBitmap(mMapImage);
+        MarkerOptions itemMarker = new MarkerOptions()
+                .position(itemPoint)
+                .icon(itemBitmap);
+        MarkerOptions myMarker = new MarkerOptions()
+                .position(myPoint);
+
+        mMap.clear();
+        mMap.addMarker(itemMarker);
+        mMap.addMarker(myMarker);
+
+        LatLngBounds bounds = new LatLngBounds.Builder()
+                .include(itemPoint)
+                .include(myPoint)
+                .build();
+
+        int margin = getResources().getDimensionPixelSize(R.dimen.map_inset_margin);
+        CameraUpdate update = CameraUpdateFactory.newLatLngBounds(bounds, margin);
+        mMap.animateCamera(update);
+
+    }
+    */
 
 }
