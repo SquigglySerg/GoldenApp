@@ -54,7 +54,7 @@ import java.util.List;
 * */
 public class TicketActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
-    private static final String KEY_CLICKED = "clicked";
+    private static final String KEY_COUPONLIST = "coupon_list";
     private static final String TAG = "GoldenApp";
 
     // Will need to convert these to mabye on but for now we will use four
@@ -90,51 +90,9 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
                     }
                 }).build();
 
-        /*
-        getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                mMap = googleMap;
-                updateUI();
-            }
-        });
-        */
+        // Get our coupon list
+        mList = (CouponList) getIntent().getSerializableExtra(KEY_COUPONLIST);
 
-        // This is to set our current location so we don't have to worry about null pointers
-        // mCurrentLocation.setLatitude(0);
-        // mCurrentLocation.setLongitude(0);
-        // mClient.connect();
-        //findLocation();
-
-        // Get the list of coupouns.
-        //mList = CouponList.get(this);
-
-        /*
-        // This is our general location
-        try {
-            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mClient);
-        } catch (SecurityException se) {
-
-        }
-        */
-
-        // Will need to be removed when we get the database for them
-        // Fill in the list of counpons with their new locations.
-        /*
-        for (Coupon x : mList.mCoupons) {
-            if (mCurrentLocation != null) {
-                x.setmLat(mCurrentLocation.getLatitude());
-                x.setmLog(mCurrentLocation.getLongitude());
-                Log.i(TAG, "The lattitude: " + mCurrentLocation.getLatitude() + " Long: " + mCurrentLocation.getLongitude());
-            }
-            else {
-                Log.i(TAG, "STill null");
-                x.setmLat(0);
-                x.setmLog(0);
-            }
-        }
-        */
-        // Delete the above when done
 
         // Define the four different checkboxes
         mCheckBox1 = (CheckBox) findViewById( R.id.ticket_checkbox1 );
@@ -148,77 +106,6 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
         *       far they will be allowed to get the ticket
         *
         * */
-        mCheckBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                findLocation();
-                try {
-                    Log.i(TAG, "The lattitude: " + mCurrentLocation.getLatitude() + " Long: " + mCurrentLocation.getLongitude());
-                } catch (NullPointerException np) {
-                    Log.e(TAG, "Its a null");
-                }
-                if (mCheckBox1.isChecked() && !mChecked1)/* && mCurrentLocation != null
-                        && mList.mCoupons.get(0).getmLat() == mCurrentLocation.getLatitude()
-                        && mList.mCoupons.get(0).getmLog() == mCurrentLocation.getLongitude())*/ {
-                    Toast.makeText(TicketActivity.this, mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_LONG).show();
-                    mChecked1 = true;
-                    //Toast.makeText(getParentActivityIntent(), mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_SHORT ).show();
-                }
-                else if (mChecked1) {
-                    Toast.makeText(TicketActivity.this, "You have already claimed this ticket", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(TicketActivity.this, "There are no events near you.", Toast.LENGTH_LONG).show();
-                }
-                mCheckBox1.setChecked(mChecked1);
-            }
-        });
-        mCheckBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                findLocation();
-                mCheckBox2.setChecked(false);
-                Toast.makeText(TicketActivity.this, "There are no events near you.\n"
-                        + " NOTE: This one is designed to fail for the purposes\n"
-                        + " of showing you how it would work in the final version.", Toast.LENGTH_LONG).show();
-
-            }
-        });
-        mCheckBox3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                findLocation();
-                if (mCheckBox3.isChecked())/* && mCurrentLocation != null
-                        && mList.mCoupons.get(2).getmLat() == mCurrentLocation.getLatitude()
-                        && mList.mCoupons.get(2).getmLog() == mCurrentLocation.getLongitude())*/ {
-                    Toast.makeText(TicketActivity.this, mList.mCoupons.get(2).getmCoupon(), Toast.LENGTH_LONG).show();
-                    mChecked2 = true;
-                    //Toast.makeText(getParentActivityIntent(), mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_SHORT ).show();
-                }
-                else if (mChecked2) {
-                    Toast.makeText(TicketActivity.this, "You have already claimed this ticket", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(TicketActivity.this, "There are no events near you.", Toast.LENGTH_LONG).show();
-                }
-                mCheckBox3.setChecked(mChecked2);
-            }
-        });
-        mCheckBox4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                findLocation();
-                mCheckBox4.setChecked(false);
-                Toast.makeText(TicketActivity.this, "There are no events near you.\n"
-                        + " NOTE: This one is designed to fail for the purposes\n"
-                        + " of showing you how it would work in the final version.", Toast.LENGTH_LONG).show();
-            }
-        });
-
 
     }
 
