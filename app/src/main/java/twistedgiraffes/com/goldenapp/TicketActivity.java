@@ -107,7 +107,7 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
         //findLocation();
 
         // Get the list of coupouns.
-        mList = CouponList.get(this);
+        //mList = CouponList.get(this);
 
         /*
         // This is our general location

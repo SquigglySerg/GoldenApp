@@ -18,6 +18,10 @@ public class EventFeedActivity extends AppCompatActivity
 
     DataBase mDataBase;
 
+    // Mvillafu: I'm adding a list of coupons inside the main function instead of a database
+    private CouponList mCouponList;
+    private static final String KEY_COUPONLIST = "coupon_list";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +72,12 @@ public class EventFeedActivity extends AppCompatActivity
             Intent intent = new Intent(this, CalendarActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_golden_ticket) {
+            // Mvillafu: I'm adding a list of coupons inside the main function instead of a database
+            if (mCouponList == null) { // for the start of the app
+                mCouponList = CouponList.get(this);
+            }
             Intent intent = new Intent(this, TicketActivity.class);
+            intent.putExtra(KEY_COUPONLIST, mCouponList);
             startActivity(intent);
         } else if (id == R.id.nav_map) {
             Intent intent = new Intent(this, MapsActivity.class);

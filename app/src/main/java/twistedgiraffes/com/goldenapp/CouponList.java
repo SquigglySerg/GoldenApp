@@ -3,6 +3,7 @@ package twistedgiraffes.com.goldenapp;
 import android.content.Context;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * Created by michael on 3/22/2017.
  */
 
-public class CouponList {
+public class CouponList implements Serializable {
     public static final String TAG = MapsActivity.class.getSimpleName();
     private static CouponList sCouponList;
 
