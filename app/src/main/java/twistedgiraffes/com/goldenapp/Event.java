@@ -16,10 +16,19 @@ public class Event implements Serializable {
     private String Location;
     private Double Lat;
     private Double Lng;
+    private String EndTime;
     private UUID mId;
 
     //Local variables that are not synced
     private boolean mToogle;
+
+    public String getEndTime() {
+        return EndTime;
+    }
+
+    public void setEndTime(String endTime) {
+        EndTime = endTime;
+    }
 
     public boolean getToogle() {
         return mToogle;
@@ -93,7 +102,7 @@ public class Event implements Serializable {
         mId = id;
     }
 
-    public Event(String title, String description, String time, String date, String location, Double lat, Double lng) {
+    public Event(String title, String description, String time, String date, String location, Double lat, Double lng, String endTime) {
         Title = title;
         Description = description;
         Time = time;
@@ -103,6 +112,7 @@ public class Event implements Serializable {
         Lng = lng;
         mId = UUID.randomUUID();
         mToogle = false;
+        EndTime = endTime;
     }
 
     public Event() {

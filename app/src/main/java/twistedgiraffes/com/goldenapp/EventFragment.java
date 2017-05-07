@@ -1,8 +1,13 @@
 package twistedgiraffes.com.goldenapp;
 
+import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +15,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -18,6 +30,7 @@ import java.util.UUID;
 
 public class EventFragment extends Fragment {
     private static final String ARG_EVENT_ID = "event_id";
+    private static final String TAG = "EventFragment";
 
     private Event mEvent;
     private ImageView mImage;
@@ -91,6 +104,33 @@ public class EventFragment extends Fragment {
         mLocation = (TextView) v.findViewById(R.id.event_location);
         mDescription = (TextView) v.findViewById(R.id.event_description);
         mAddToCalendar = (Button) v.findViewById(R.id.event_add_to_calendar);
+        mAddToCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateFormat format = new SimpleDateFormat("MMMM d, yyyy hh:mm a", Locale.ENGLISH);
+                try {
+                    Geocoder geocoder;
+                    List<Address> addresses;
+                    geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    addresses = geocoder.getFromLocation(mEvent.getLat(), mEvent.getLng(), 1);
+                    Date date = format.parse(mEvent.getDate() + " " + mEvent.getTime());
+                    Date end = format.parse(mEvent.getDate() + " " + mEvent.getEndTime());
+                    Intent intent = new Intent(Intent.ACTION_INSERT)
+                            .setData(CalendarContract.Events.CONTENT_URI)
+                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date.getTime())
+                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end.getTime())
+                            .putExtra(CalendarContract.Events.TITLE, mEvent.getTitle())
+                            .putExtra(CalendarContract.Events.DESCRIPTION, mEvent.getDescription())
+                            .putExtra(CalendarContract.Events.EVENT_LOCATION, addresses.get(0));
+                    startActivity(intent);
+                } catch (ParseException e) {
+                    Log.e(TAG, "Failed to pare date for event: " + mEvent.getTitle());
+                } catch (IOException e) {
+                    Log.e(TAG, "Location to Address failed with code :" + e);
+                }
+
+            }
+        });
 
         mImage.setImageResource(R.mipmap.ic_launcher);
         mTitle.setText(mEvent.getTitle());
