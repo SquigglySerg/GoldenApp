@@ -40,7 +40,8 @@ public class DataBase {
     public long getNewestEventTime() {
         DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
         Date newestDate = null;
-        for (Event event : mLocalList){
+       /* Fancy code to get the newset event. Not needed under the new design.
+       for (Event event : mLocalList){
             try {
                 Date date = format.parse(event.getDate());
                 if (newestDate == null){
@@ -54,6 +55,7 @@ public class DataBase {
                 Log.e("Calender", "Failed to pare date form event: " + event.getTitle());
             }
         }
+        */
         if (newestDate == null){
             newestDate = new Date();
         }
