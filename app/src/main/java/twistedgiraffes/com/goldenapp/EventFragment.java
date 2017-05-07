@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,10 +26,11 @@ public class EventFragment extends Fragment {
     private TextView mDate;
     private TextView mLocation;
     private TextView mDescription;
+    private Button mAddToCalendar;
 
-    public static EventFragment newInstance(UUID crimeId){
+    public static EventFragment newInstance(UUID eventId){
         Bundle args = new Bundle();
-        args.putSerializable(ARG_EVENT_ID, crimeId);
+        args.putSerializable(ARG_EVENT_ID, eventId);
 
         EventFragment fragment = new EventFragment();
         fragment.setArguments(args);
@@ -82,13 +84,13 @@ public class EventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.event_full_page,container,false);
 
-
         mImage = (ImageView) v.findViewById(R.id.event_photo);
         mTitle = (TextView) v.findViewById(R.id.event_title);
         mTime = (TextView) v.findViewById(R.id.event_time);
         mDate = (TextView) v.findViewById(R.id.event_date);
         mLocation = (TextView) v.findViewById(R.id.event_location);
         mDescription = (TextView) v.findViewById(R.id.event_description);
+        mAddToCalendar = (Button) v.findViewById(R.id.event_add_to_calendar);
 
         mImage.setImageResource(R.mipmap.ic_launcher);
         mTitle.setText(mEvent.getTitle());

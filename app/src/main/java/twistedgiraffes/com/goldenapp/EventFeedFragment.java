@@ -1,6 +1,7 @@
 package twistedgiraffes.com.goldenapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -291,11 +292,18 @@ public class EventFeedFragment extends Fragment implements DataBase.DataBaseChan
          */
         @Override
         public void onClick(View v) {
+            if(mEvent.getToogle()){
+                Intent intent = EventDetailActivity.newIntent(getActivity(), mEvent.getId());
+                startActivity(intent);
+            }
+
             //mCallbacks.onEventSelect(mEvent);
             mEvent.setToogle(!mEvent.getToogle());
             updateTextBox();
-            Log.i(TAG, "Full Text was toogled");
+            Log.i(TAG, "Full Text was toogled" + Boolean.toString(mEvent.getToogle()));
             mAdapter.notifyItemChanged(getAdapterPosition());
+
+
         }
     }
 
