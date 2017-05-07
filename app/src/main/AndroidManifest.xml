@@ -32,6 +32,14 @@
             android:name=".EventActivity"
             android:label="@string/app_name"
             android:parentActivityName=".EventFeedActivity"></activity>
+        <activity
+            android:name=".MapsActivity"
+            android:label="@string/title_activity_maps"></activity>
+        <activity
+            android:name=".TicketActivity"
+            android:label="@string/golden_ticket"></activity>
+        <activity android:name=".CalendarActivity"></activity>
+        <activity android:name=".EventDetailActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -43,14 +51,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
-        <activity
-            android:name=".TicketActivity"
-            android:label="@string/golden_ticket"></activity>
-        <activity android:name=".CalendarActivity"></activity>
     </application>
 
 </manifest>
