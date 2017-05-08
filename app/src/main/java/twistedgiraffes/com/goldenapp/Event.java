@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * Created by Sergio on 3/18/2017.
+ * The class used to represent an event.
+ *
+ * This class is used to represent an event. Holds in formation about events such as the title,
+ * description, start time, end time, date, location, latitude, longitude, and the event id.
+ * Note: this event class represents how an event is stored on the database.
  */
-
 public class Event implements Serializable {
     //Database synced elements
     private String Title;
@@ -22,6 +25,27 @@ public class Event implements Serializable {
     //Local variables that are not synced
     private boolean mToogle;
 
+    //Constructors
+    public Event(String title, String description, String time, String date, String location, Double lat, Double lng, String endTime) {
+        Title = title;
+        Description = description;
+        Time = time;
+        Date = date;
+        Location = location;
+        Lat = lat;
+        Lng = lng;
+        mId = UUID.randomUUID();
+        mToogle = false;
+        EndTime = endTime;
+    }
+
+    public Event() {
+        mId = UUID.randomUUID();
+        mToogle = false;
+        //Required by Firebase for some weird reason.
+    }
+
+    // Getters and Setters
     public String getEndTime() {
         return EndTime;
     }
@@ -100,24 +124,5 @@ public class Event implements Serializable {
 
     public void setId(UUID id) {
         mId = id;
-    }
-
-    public Event(String title, String description, String time, String date, String location, Double lat, Double lng, String endTime) {
-        Title = title;
-        Description = description;
-        Time = time;
-        Date = date;
-        Location = location;
-        Lat = lat;
-        Lng = lng;
-        mId = UUID.randomUUID();
-        mToogle = false;
-        EndTime = endTime;
-    }
-
-    public Event() {
-        mId = UUID.randomUUID();
-        mToogle = false;
-        //Required by Firebase for some weird reason.
     }
 }

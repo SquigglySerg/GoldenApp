@@ -25,9 +25,13 @@ import java.util.Locale;
 import java.util.UUID;
 
 /**
- * Created by rybailey on 3/8/17.
+ * The fragment class used to display detailed information on events.
+ *
+ * The fragment class used to display detailed information on events. Will take a UUID to identify
+ * which event needs to be displayed, and displays the events: title, start and end time, date,
+ * location, and description. Also displays a button which allows the user to add the event to
+ * their calendar.
  */
-
 public class EventFragment extends Fragment {
     private static final String ARG_EVENT_ID = "event_id";
     private static final String TAG = "EventFragment";
@@ -41,6 +45,12 @@ public class EventFragment extends Fragment {
     private TextView mDescription;
     private Button mAddToCalendar;
 
+    /**
+     * The function used so it can be hosted by an Activity.
+     *
+     * @param eventId used to obtain the event from the database.
+     * @return EventFragment so it can be hosted.
+     */
     public static EventFragment newInstance(UUID eventId){
         Bundle args = new Bundle();
         args.putSerializable(ARG_EVENT_ID, eventId);

@@ -22,16 +22,48 @@ import java.util.UUID;
  * Created by rybailey on 4/3/17.
  */
 
+/**
+ * The class used to hold a list of events which is retrieved from the FireBase database.
+ *
+ * The class used to hold a list of events which is retrieved from the FireBase database. Also
+ * allows the removal, addition, or retrieval of those events.
+ */
 public class DataBase {
     private static DataBase sDataBase;
     private static final String FIREBASE_URL = "https://banded-charmer-160001.firebaseio.com/";
 
-
-    private HashMap<String, Event> events;
     private Context mContext;
-
     public List<Event> mLocalList;
     private List<DataBaseChanged> mListeners;
+
+    /**
+     * The DataBase constructor.
+     *
+     * Takes in a context which is needed to initialize the FireBase database, and initializes the
+     * mLocalList (a List<Event> holding the events) and the mListeners (a List<DataBaseChanged>).
+     * Later initializing the FireBase database.
+     *
+     * @param context
+     */
+    private DataBase(Context context){
+        mContext = context;
+        mLocalList = new ArrayList<>();
+        mListeners = new ArrayList<>();
+        initializeFireBase();
+    }
+
+    /**
+     * Returns the static Database varible used throughout the app.
+     *
+     * @param context used to define the DataBase, if not done so already.
+     * @return sDataBase which contains all the events in the FireBase database.
+     */
+    public static DataBase get(Context context){
+        if (sDataBase == null){
+            sDataBase = new DataBase(context);
+        }
+        return sDataBase;
+    }
 
     public void clearListeners() {
         mListeners.clear();
@@ -40,22 +72,7 @@ public class DataBase {
     public long getNewestEventTime() {
         DateFormat format = new SimpleDateFormat("MMMM d, yyyy", Locale.ENGLISH);
         Date newestDate = null;
-       /* Fancy code to get the newset event. Not needed under the new design.
-       for (Event event : mLocalList){
-            try {
-                Date date = format.parse(event.getDate());
-                if (newestDate == null){
-                    newestDate = date;
-                } else {
-                    if (date.before(newestDate)){
-                        newestDate=date;
-                    }
-                }
-            } catch (ParseException e) {
-                Log.e("Calender", "Failed to pare date form event: " + event.getTitle());
-            }
-        }
-        */
+
         if (newestDate == null){
             newestDate = new Date();
         }
@@ -67,21 +84,13 @@ public class DataBase {
         void itemAddedAt(int pos);
     }
 
-    public static DataBase get(Context context){
-        if (sDataBase == null){
-            sDataBase = new DataBase(context);
-        }
-        return sDataBase;
-    }
-
-
-    private DataBase(Context context){
-        mContext = context;
-        mLocalList = new ArrayList<>();
-        mListeners = new ArrayList<>();
-        events = new HashMap<>();
-        initializeFireBase();
-    }
+    /**
+     * Initializes the FireBase database.
+     *
+     * Connects to the Golden App FireBase database using the FIREBASE_URL and the context passed in
+     * when the Database was created. Once connected it will populate the mLocalList.
+     *
+     */
     private void initializeFireBase(){
         Firebase.setAndroidContext(mContext);
         Firebase firebaseRef = new Firebase(FIREBASE_URL);
@@ -107,6 +116,29 @@ public class DataBase {
         });
     }
 
+    /**
+     * Temporary function used to add items to the database.
+     *
+     * A function used during development which add two test events to the database.
+     */
+    private void tempAddToDB(){
+        Firebase.setAndroidContext(mContext);
+        Firebase fb = new Firebase(FIREBASE_URL);
+
+        Event e = new Event("Baseball Game", "Test_Event: Baseball game in Lions Park at 7:00 pm on March 3rd, 2017.", "7:00 pm", "March 3, 2017", "Lions Park", 39.7547, -105.2291, "9:00 pm");
+        Firebase eventRef = fb.child(e.getTitle());
+        eventRef.setValue(e);
+
+        Event e2 = new Event("Half Price Froyo at Goozell's", "Test_Event: Half price froyo at Goozell's from 2:00-3:00 pm on March 2nd, 2017.", "2:00 pm", "March 2, 2017", "Goozell", 39.755245, -105.221391, "3:00 pm");
+        eventRef = fb.child(e2.getTitle());
+        eventRef.setValue(e2);
+    }
+
+    /**
+     * Takes in an event and will either add the event or update the event if it already exist.
+     *
+     * @param e is the event which should be added or updates in the database.
+     */
     public void addOrUpdate(Event e){
         Log.d("***Event:  ", e.getTitle() + " added.");
         for(int i = 0; i < mLocalList.size(); i++){
@@ -124,10 +156,21 @@ public class DataBase {
         }
     }
 
+    /**
+     * Returns the mLocalList variable which is a list of events, holding all the events.
+     *
+     * @return
+     */
     public List<Event> getEventList() {
         return mLocalList;
     }
 
+    /**
+     * Takes in a UUID and returns the matching event.
+     *
+     * @param id a UUID which identifies which event to return
+     * @return the event in mLocalList with the passed in id.
+     */
     public Event getEvent(UUID id){
         for(Event event : mLocalList){
             if (event.getId().equals(id)) {
@@ -137,11 +180,21 @@ public class DataBase {
         return null;
     }
 
+    /**
+     * Takes in an int parameter and will remove the item from the mLocalList List<Event>. Will not
+     * check if the position is out of bounds.
+     *
+     * @param position the position in the mLocalList list<Event> which should be removed.
+     */
     public void delateEventItem(int position){
         mLocalList.remove(position);
-
     }
 
+    /**
+     * Returns the size of the mLocalList list<Event>
+     *
+     * @return the int size of the mLocalList list<Event>
+     */
     public int size(){
         return mLocalList.size();
     }

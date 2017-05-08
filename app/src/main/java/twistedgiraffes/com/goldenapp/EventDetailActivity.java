@@ -2,19 +2,30 @@ package twistedgiraffes.com.goldenapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import java.util.UUID;
 
-/**
- * Created by Sergio on 5/7/2017.
- */
 
+/**
+ * The Activity which host the EventFragment.
+ *
+ * The Activity which host the EventFragment. Requires a UUID to be passed in -- the eventID. Which
+ * is utilized as the an identifier for the event which needs to be displayed from the database in
+ * the EventFragment.
+ */
 public class EventDetailActivity extends SingleFragmentActivity {
     private static final String ARG_EVENT_ID = "event_id";
 
+    /**
+     * The function returning an intent with the passed in parameters as Extras. Uses the eventId
+     * parameter to deliver it to the Event Fragment which uses it to identify which event to
+     * display.
+     *
+     * @param packageContext
+     * @param eventId used to identify which event to display.
+     * @return intent which holds the needed parameters for the EventFragment.
+     */
     public static Intent newIntent(Context packageContext, UUID eventId){
         Intent intent = new Intent(packageContext, EventDetailActivity.class);
         intent.putExtra(ARG_EVENT_ID, eventId.toString());
