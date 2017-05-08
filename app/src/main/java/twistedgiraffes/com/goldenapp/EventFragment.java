@@ -134,7 +134,7 @@ public class EventFragment extends Fragment {
 
         mImage.setImageResource(R.mipmap.ic_launcher);
         mTitle.setText(mEvent.getTitle());
-        mTime.setText(mEvent.getTime());
+        mTime.setText(mEvent.getTime() + " - " + mEvent.getEndTime());
         mDate.setText(mEvent.getDate());
         mLocation.setText(mEvent.getLocation());
         mDescription.setText(mEvent.getDescription());

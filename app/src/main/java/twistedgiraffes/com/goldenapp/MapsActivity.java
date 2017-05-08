@@ -85,7 +85,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //Display a snack bar with the respective event's description
                 final Event e = mDataBase.getEvent(UUID.fromString(marker.getSnippet()));
 
-                String eMsg = e.getTitle() + "\n" + e.getTime() + " on " + e.getDate() + " at " + e.getLocation();
+                String eMsg = e.getTitle() + "\n" + e.getTime() + " - " + e.getEndTime()
+                        + " on " + e.getDate() + " at " + e.getLocation();
                 Snackbar.make( mapFragment.getView(), eMsg, eMsg.length()*100)
                         .setAction("Details", new View.OnClickListener() {
                             @Override
