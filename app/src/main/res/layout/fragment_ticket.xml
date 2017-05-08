@@ -6,10 +6,12 @@
     android:focusable="true"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
+    android:paddingTop="64dp"
+    android:paddingBottom="64dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginTop="10dp"
     android:clickable="true"
-    android:background="@drawable/ic_golden_ticket">
+    android:background="@drawable/golden_ticket">
 
     <TextView
         android:id="@+id/ticket_prize"
