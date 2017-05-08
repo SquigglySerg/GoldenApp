@@ -1,5 +1,6 @@
 package twistedgiraffes.com.goldenapp;
 
+import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -46,7 +47,7 @@ import java.util.List;
 *
 * */
 public class TicketActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener  {
     private static final String KEY_COUPONLIST = "coupon_list";
     private static final String TAG = "GoldenApp";
 
@@ -81,6 +82,7 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
         mList = CouponList.get(this);
         mCouponRecyclerView = (RecyclerView) findViewById(R.id.ticket_recycle_view);
         mCouponRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
 
         CouponList couponList = CouponList.get(getApplicationContext());
         List<Coupon> crimes = couponList.getCoupons();
@@ -149,7 +151,16 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
 
         public void bindTicket(Coupon coupon) {
             mCoupon = coupon;
-            mTitleTextView.setText(""); // This will be blank and will only be displayed after they click
+            if (mCoupon.getClicked()) {
+                mTitleTextView.setText(mCoupon.getmCoupon());
+                mTitleTextView.setBackgroundColor(Color.WHITE);
+                //mTitleTextView.setBackgroundResource(R.drawable.golden_scratch);
+                //RelativeLayout relative = (RelativeLayout) findViewById(R.id.ticket);
+                //relative.setBackgroundResource(R.drawable.golden_scratch);
+            } else {
+                mTitleTextView.setText(""); // This will be blank and will only be displayed after they click
+            }
+
         }
 
         private double distance(double cLat, double cLog, double tLat, double tLog) {
@@ -170,9 +181,16 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
                     }
                 }
 
+                //v.setBackgroundColor(Color.WHITE);
+                v.setBackgroundResource(R.drawable.golden_scratch);
+
                 // We set the background to be blank so they know they can't click it
-                RelativeLayout relative = (RelativeLayout) findViewById(R.id.ticket);
-                relative.setBackgroundResource(R.drawable.golden_scratch);
+                //RelativeLayout relative = (RelativeLayout) findViewById(R.id.ticket);
+                //relative.setBackgroundResource(R.drawable.golden_scratch);
+
+            } else if (mCoupon.getClicked()) {
+                v.setBackgroundColor(Color.WHITE);
+                Toast.makeText(getApplicationContext(), "You already received this ticket.", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Sorry there are no events near by.\nTry looking around.", Toast.LENGTH_SHORT).show();
             }

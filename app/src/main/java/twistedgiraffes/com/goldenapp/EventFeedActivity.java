@@ -18,6 +18,8 @@ public class EventFeedActivity extends AppCompatActivity
 
     DataBase mDataBase;
 
+    // Michael: This is to set up our tickets before hand
+    private CouponList mCouponList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,8 @@ public class EventFeedActivity extends AppCompatActivity
             Intent intent = new Intent(this, CalendarActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_golden_ticket) {
+            // set up our coupons/tickets
+            mCouponList = CouponList.get(this);
             Intent intent = new Intent(this, TicketActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_map) {
