@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -113,6 +115,7 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
         //updateUI();
     }
 
+    // Find out current location, it will take some time each time
     private void findLocation() {
         LocationRequest request = LocationRequest.create();
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -149,10 +152,31 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
             mTitleTextView.setText(""); // This will be blank and will only be displayed after they click
         }
 
+        private double distance(double cLat, double cLog, double tLat, double tLog) {
+            return Math.sqrt(Math.pow(cLat - tLat, 2) + Math.pow(cLog - tLog, 2));
+        }
         // This is where our checking locations will work
         @Override
         public void onClick(View v) {
-            //mCallbacks.onCrimeSelected(mCrime);
+            findLocation(); // this will need to be called each time so that way it is updated every time
+            if (!mCoupon.getClicked()
+                    && distance(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(),
+                    mCoupon.getmLat(),mCoupon.getmLog()) <= 0.002) {
+                mTitleTextView.setText(mCoupon.getmCoupon());
+                // We have to go in and manually set the values to true in a loop
+                for (Coupon x : mList.getCoupons()) {
+                    if (x.getId() == mCoupon.getId()) {
+                        x.setClicked(true);
+                    }
+                }
+
+                // We set the background to be blank so they know they can't click it
+                RelativeLayout relative = (RelativeLayout) findViewById(R.id.ticket);
+                relative.setBackgroundResource(R.drawable.golden_scratch);
+            } else {
+                Toast.makeText(getApplicationContext(), "Sorry there are no events near by.\nTry looking around.", Toast.LENGTH_SHORT).show();
+            }
+
         }
 
     }
