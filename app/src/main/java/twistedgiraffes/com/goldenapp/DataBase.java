@@ -107,19 +107,6 @@ public class DataBase {
         });
     }
 
-    private void tempAddToDB(){
-        Firebase.setAndroidContext(mContext);
-        Firebase fb = new Firebase(FIREBASE_URL);
-
-        Event e = new Event("TEST1 TITLE", "DESC", "7:00 pm", "March 3, 2017", "Lions Park", 39.7554, -105.2213);
-        Firebase eventRef = fb.child(e.getTitle());
-        eventRef.setValue(e);
-
-        Event e2 = new Event("TEST2 TITLE", "DESC 2", "2:00 pm", "March 2, 2017", "Lions Park 2", 39.7554, -105.2213);
-        eventRef = fb.child(e2.getTitle());
-        eventRef.setValue(e2);
-    }
-
     public void addOrUpdate(Event e){
         Log.d("***Event:  ", e.getTitle() + " added.");
         for(int i = 0; i < mLocalList.size(); i++){
