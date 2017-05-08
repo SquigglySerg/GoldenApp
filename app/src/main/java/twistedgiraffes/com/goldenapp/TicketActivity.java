@@ -171,6 +171,7 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
         public void onClick(View v) {
             findLocation(); // this will need to be called each time so that way it is updated every time
             if (!mCoupon.getClicked()
+                    && mCurrentLocation != null
                     && distance(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(),
                     mCoupon.getmLat(),mCoupon.getmLog()) <= 0.002) {
                 mTitleTextView.setText(mCoupon.getmCoupon());
@@ -191,6 +192,8 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
             } else if (mCoupon.getClicked()) {
                 v.setBackgroundColor(Color.WHITE);
                 Toast.makeText(getApplicationContext(), "You already received this ticket.", Toast.LENGTH_SHORT).show();
+            } else if (mCurrentLocation == null) {
+                Toast.makeText(getApplicationContext(), "Please wait a moment we are getting your location.", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Sorry there are no events near by.\nTry looking around.", Toast.LENGTH_SHORT).show();
             }
