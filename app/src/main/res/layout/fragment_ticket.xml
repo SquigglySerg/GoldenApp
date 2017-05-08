@@ -2,14 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:focusable="true"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
     android:clickable="true"
-    android:background="@drawable/golden_ticket">
+    android:background="@drawable/ic_golden_ticket">
 
     <TextView
         android:id="@+id/ticket_prize"

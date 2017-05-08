@@ -77,7 +77,7 @@ public class EventFeedActivity extends AppCompatActivity
                 mCouponList = CouponList.get(this);
             }
             Intent intent = new Intent(this, TicketActivity.class);
-            intent.putExtra(KEY_COUPONLIST, mCouponList);
+            //intent.putExtra(KEY_COUPONLIST, mCouponList);
             startActivity(intent);
         } else if (id == R.id.nav_map) {
             Intent intent = new Intent(this, MapsActivity.class);

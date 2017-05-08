@@ -11,7 +11,7 @@ import java.util.List;
  * Created by michael on 3/22/2017.
  */
 
-public class CouponList implements Serializable {
+public class CouponList {
     public static final String TAG = MapsActivity.class.getSimpleName();
     private static CouponList sCouponList;
 
