@@ -1,8 +1,10 @@
 package twistedgiraffes.com.goldenapp;
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,6 +15,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.UUID;
 
 /**
  * The Activity showing the map with the events as markers
@@ -79,9 +83,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker marker) {
                 //Display a snack bar with the respective event's description
-                String eMsg = marker.getTitle() + "\n" + marker.getSnippet();
+                final Event e = mDataBase.getEvent(UUID.fromString(marker.getSnippet()));
+
+                String eMsg = e.getTitle() + "\n" + e.getTime() + " - " + e.getEndTime()
+                        + " on " + e.getDate() + " at " + e.getLocation();
                 Snackbar.make( mapFragment.getView(), eMsg, eMsg.length()*100)
-                        .setAction("Action", null)
+                        .setAction("Details", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent = EventDetailActivity.newIntent(getBaseContext(), e.getId());
+                                startActivity(intent);
+                            }
+                        })
                         .show();
 
                 //Move camera to event
@@ -95,12 +108,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for(Event e : mDataBase.getEventList()){
             LatLng eLocal = new LatLng(e.getLat(), e.getLng());
             String eTitle = e.getTitle();
-            String eDescription = e.getDescription();
+            String eId = e.getId().toString();
 
             mMap.addMarker(new MarkerOptions()
                     .position(eLocal)
                     .title(eTitle)
-                    .snippet(eDescription)
+                    .snippet(eId)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_event)) );
         }
     }

@@ -1,8 +1,13 @@
 package twistedgiraffes.com.goldenapp;
 
+import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +15,26 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
- * Created by rybailey on 3/8/17.
+ * The fragment class used to display detailed information on events.
+ *
+ * The fragment class used to display detailed information on events. Will take a UUID to identify
+ * which event needs to be displayed, and displays the events: title, start and end time, date,
+ * location, and description. Also displays a button which allows the user to add the event to
+ * their calendar.
  */
-
 public class EventFragment extends Fragment {
     private static final String ARG_EVENT_ID = "event_id";
+    private static final String TAG = "EventFragment";
 
     private Event mEvent;
     private ImageView mImage;
@@ -28,6 +45,12 @@ public class EventFragment extends Fragment {
     private TextView mDescription;
     private Button mAddToCalendar;
 
+    /**
+     * The function used so it can be hosted by an Activity.
+     *
+     * @param eventId used to obtain the event from the database.
+     * @return EventFragment so it can be hosted.
+     */
     public static EventFragment newInstance(UUID eventId){
         Bundle args = new Bundle();
         args.putSerializable(ARG_EVENT_ID, eventId);
@@ -91,10 +114,35 @@ public class EventFragment extends Fragment {
         mLocation = (TextView) v.findViewById(R.id.event_location);
         mDescription = (TextView) v.findViewById(R.id.event_description);
         mAddToCalendar = (Button) v.findViewById(R.id.event_add_to_calendar);
+        mAddToCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateFormat format = new SimpleDateFormat("MMMM d, yyyy hh:mm a", Locale.ENGLISH);
+                try {
+                    //Geocoder geocoder;
+                    //List<Address> addresses;
+                    //geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    //addresses = geocoder.getFromLocation(mEvent.getLat(), mEvent.getLng(), 1);
+                    Date date = format.parse(mEvent.getDate() + " " + mEvent.getTime());
+                    Date end = format.parse(mEvent.getDate() + " " + mEvent.getEndTime());
+                    Intent intent = new Intent(Intent.ACTION_INSERT)
+                            .setData(CalendarContract.Events.CONTENT_URI)
+                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, date.getTime())
+                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end.getTime())
+                            .putExtra(CalendarContract.Events.TITLE, mEvent.getTitle())
+                            .putExtra(CalendarContract.Events.DESCRIPTION, mEvent.getDescription())
+                            .putExtra(CalendarContract.Events.EVENT_LOCATION, mEvent.getLocation());
+                    startActivity(intent);
+                } catch (ParseException e) {
+                    Log.e(TAG, "Failed to pare date for event: " + mEvent.getTitle());
+                } 
+
+            }
+        });
 
         mImage.setImageResource(R.mipmap.ic_launcher);
         mTitle.setText(mEvent.getTitle());
-        mTime.setText(mEvent.getTime());
+        mTime.setText(mEvent.getTime() + " - " + mEvent.getEndTime());
         mDate.setText(mEvent.getDate());
         mLocation.setText(mEvent.getLocation());
         mDescription.setText(mEvent.getDescription());
