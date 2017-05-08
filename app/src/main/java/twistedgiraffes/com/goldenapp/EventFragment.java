@@ -109,10 +109,10 @@ public class EventFragment extends Fragment {
             public void onClick(View v) {
                 DateFormat format = new SimpleDateFormat("MMMM d, yyyy hh:mm a", Locale.ENGLISH);
                 try {
-                    Geocoder geocoder;
-                    List<Address> addresses;
-                    geocoder = new Geocoder(getContext(), Locale.getDefault());
-                    addresses = geocoder.getFromLocation(mEvent.getLat(), mEvent.getLng(), 1);
+                    //Geocoder geocoder;
+                    //List<Address> addresses;
+                    //geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    //addresses = geocoder.getFromLocation(mEvent.getLat(), mEvent.getLng(), 1);
                     Date date = format.parse(mEvent.getDate() + " " + mEvent.getTime());
                     Date end = format.parse(mEvent.getDate() + " " + mEvent.getEndTime());
                     Intent intent = new Intent(Intent.ACTION_INSERT)
@@ -121,13 +121,11 @@ public class EventFragment extends Fragment {
                             .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end.getTime())
                             .putExtra(CalendarContract.Events.TITLE, mEvent.getTitle())
                             .putExtra(CalendarContract.Events.DESCRIPTION, mEvent.getDescription())
-                            .putExtra(CalendarContract.Events.EVENT_LOCATION, addresses.get(0));
+                            .putExtra(CalendarContract.Events.EVENT_LOCATION, mEvent.getLocation());
                     startActivity(intent);
                 } catch (ParseException e) {
                     Log.e(TAG, "Failed to pare date for event: " + mEvent.getTitle());
-                } catch (IOException e) {
-                    Log.e(TAG, "Location to Address failed with code :" + e);
-                }
+                } 
 
             }
         });
