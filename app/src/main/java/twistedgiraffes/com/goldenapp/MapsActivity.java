@@ -1,6 +1,7 @@
 package twistedgiraffes.com.goldenapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;

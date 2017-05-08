@@ -30,21 +30,7 @@ import java.util.List;
  */
 
 /*
-* I will make this a fragment later
-*
-*
-* Will have a set number of tickets that the user can get
-* They must be in a specific location to get each ticket
-*
-* Need a class that will contain the string value of that ticket and its location
-* Need fragment similar to the fragment in crim init
-* */
-
-/*
-*
-* I'm just hard coding in the different check boxes for
-* time constraits
-*
+* This is our Golden Ticket Activity
 * */
 public class TicketActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener  {
@@ -78,7 +64,7 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
                     }
                 }).build();
 
-        // Get our coupon list
+        // Get our coupon list and set up our RecyclerView
         mList = CouponList.get(this);
         mCouponRecyclerView = (RecyclerView) findViewById(R.id.ticket_recycle_view);
         mCouponRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -87,6 +73,7 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
         CouponList couponList = CouponList.get(getApplicationContext());
         List<Coupon> crimes = couponList.getCoupons();
 
+        // Set up our Adapter
         Log.d(TAG, "The size of the list: " + crimes.size());
         if (mAdapter == null) {
             Log.d(TAG, "Its in the if statement");
@@ -114,7 +101,6 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
     @Override
     public void onResume() {
         super.onResume();
-        //updateUI();
     }
 
     // Find out current location, it will take some time each time
@@ -154,9 +140,6 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
             if (mCoupon.getClicked()) {
                 mTitleTextView.setText(mCoupon.getmCoupon());
                 mTitleTextView.setBackgroundColor(Color.WHITE);
-                //mTitleTextView.setBackgroundResource(R.drawable.golden_scratch);
-                //RelativeLayout relative = (RelativeLayout) findViewById(R.id.ticket);
-                //relative.setBackgroundResource(R.drawable.golden_scratch);
             } else {
                 mTitleTextView.setText(""); // This will be blank and will only be displayed after they click
             }
@@ -184,11 +167,6 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
 
                 //v.setBackgroundColor(Color.WHITE);
                 v.setBackgroundResource(R.drawable.golden_scratch);
-
-                // We set the background to be blank so they know they can't click it
-                //RelativeLayout relative = (RelativeLayout) findViewById(R.id.ticket);
-                //relative.setBackgroundResource(R.drawable.golden_scratch);
-
             } else if (mCoupon.getClicked()) {
                 v.setBackgroundColor(Color.WHITE);
                 Toast.makeText(getApplicationContext(), "You already received this ticket.", Toast.LENGTH_SHORT).show();
