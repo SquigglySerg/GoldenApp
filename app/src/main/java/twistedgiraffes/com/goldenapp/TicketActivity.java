@@ -1,16 +1,20 @@
 package twistedgiraffes.com.goldenapp;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -18,17 +22,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -53,27 +47,21 @@ import java.util.List;
 *
 * */
 public class TicketActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
-    private static final String KEY_CLICKED = "clicked";
+        GoogleApiClient.OnConnectionFailedListener  {
+    private static final String KEY_COUPONLIST = "coupon_list";
     private static final String TAG = "GoldenApp";
 
-    // Will need to convert these to mabye on but for now we will use four
-    private CheckBox mCheckBox1;
-    private CheckBox mCheckBox2;
-    private CheckBox mCheckBox3;
-    private CheckBox mCheckBox4;
-
     private GoogleApiClient mClient;
-    private GoogleMap mMap;
     private CouponList mList;
     private Location mCurrentLocation;
 
-    private boolean mChecked1 = false;
-    private boolean mChecked2 = false;
+    private RecyclerView mCouponRecyclerView;
+    private TicketAdapter mAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_ticket);
+        setContentView(R.layout.fragment_ticket_list);
 
         mClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -90,136 +78,24 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
                     }
                 }).build();
 
-        /*
-        getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                mMap = googleMap;
-                updateUI();
-            }
-        });
-        */
-
-        // This is to set our current location so we don't have to worry about null pointers
-        // mCurrentLocation.setLatitude(0);
-        // mCurrentLocation.setLongitude(0);
-        // mClient.connect();
-        //findLocation();
-
-        // Get the list of coupouns.
+        // Get our coupon list
         mList = CouponList.get(this);
+        mCouponRecyclerView = (RecyclerView) findViewById(R.id.ticket_recycle_view);
+        mCouponRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        /*
-        // This is our general location
-        try {
-            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mClient);
-        } catch (SecurityException se) {
 
+        CouponList couponList = CouponList.get(getApplicationContext());
+        List<Coupon> crimes = couponList.getCoupons();
+
+        Log.d(TAG, "The size of the list: " + crimes.size());
+        if (mAdapter == null) {
+            Log.d(TAG, "Its in the if statement");
+            mAdapter = new TicketAdapter(crimes);
+            mCouponRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.setCoupons(crimes);
+            mAdapter.notifyDataSetChanged();
         }
-        */
-
-        // Will need to be removed when we get the database for them
-        // Fill in the list of counpons with their new locations.
-        /*
-        for (Coupon x : mList.mCoupons) {
-            if (mCurrentLocation != null) {
-                x.setmLat(mCurrentLocation.getLatitude());
-                x.setmLog(mCurrentLocation.getLongitude());
-                Log.i(TAG, "The lattitude: " + mCurrentLocation.getLatitude() + " Long: " + mCurrentLocation.getLongitude());
-            }
-            else {
-                Log.i(TAG, "STill null");
-                x.setmLat(0);
-                x.setmLog(0);
-            }
-        }
-        */
-        // Delete the above when done
-
-        // Define the four different checkboxes
-        mCheckBox1 = (CheckBox) findViewById( R.id.ticket_checkbox1 );
-        mCheckBox2 = (CheckBox) findViewById( R.id.ticket_checkbox2 );
-        mCheckBox3 = (CheckBox) findViewById( R.id.ticket_checkbox3 );
-        mCheckBox4 = (CheckBox) findViewById( R.id.ticket_checkbox4 );
-
-        /*
-        *
-        * NOTE: In the final version we will be adding a delta for how
-        *       far they will be allowed to get the ticket
-        *
-        * */
-        mCheckBox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                findLocation();
-                try {
-                    Log.i(TAG, "The lattitude: " + mCurrentLocation.getLatitude() + " Long: " + mCurrentLocation.getLongitude());
-                } catch (NullPointerException np) {
-                    Log.e(TAG, "Its a null");
-                }
-                if (mCheckBox1.isChecked() && !mChecked1)/* && mCurrentLocation != null
-                        && mList.mCoupons.get(0).getmLat() == mCurrentLocation.getLatitude()
-                        && mList.mCoupons.get(0).getmLog() == mCurrentLocation.getLongitude())*/ {
-                    Toast.makeText(TicketActivity.this, mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_LONG).show();
-                    mChecked1 = true;
-                    //Toast.makeText(getParentActivityIntent(), mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_SHORT ).show();
-                }
-                else if (mChecked1) {
-                    Toast.makeText(TicketActivity.this, "You have already claimed this ticket", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(TicketActivity.this, "There are no events near you.", Toast.LENGTH_LONG).show();
-                }
-                mCheckBox1.setChecked(mChecked1);
-            }
-        });
-        mCheckBox2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                findLocation();
-                mCheckBox2.setChecked(false);
-                Toast.makeText(TicketActivity.this, "There are no events near you.\n"
-                        + " NOTE: This one is designed to fail for the purposes\n"
-                        + " of showing you how it would work in the final version.", Toast.LENGTH_LONG).show();
-
-            }
-        });
-        mCheckBox3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                findLocation();
-                if (mCheckBox3.isChecked())/* && mCurrentLocation != null
-                        && mList.mCoupons.get(2).getmLat() == mCurrentLocation.getLatitude()
-                        && mList.mCoupons.get(2).getmLog() == mCurrentLocation.getLongitude())*/ {
-                    Toast.makeText(TicketActivity.this, mList.mCoupons.get(2).getmCoupon(), Toast.LENGTH_LONG).show();
-                    mChecked2 = true;
-                    //Toast.makeText(getParentActivityIntent(), mList.mCoupons.get(0).getmCoupon(), Toast.LENGTH_SHORT ).show();
-                }
-                else if (mChecked2) {
-                    Toast.makeText(TicketActivity.this, "You have already claimed this ticket", Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(TicketActivity.this, "There are no events near you.", Toast.LENGTH_LONG).show();
-                }
-                mCheckBox3.setChecked(mChecked2);
-            }
-        });
-        mCheckBox4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                findLocation();
-                mCheckBox4.setChecked(false);
-                Toast.makeText(TicketActivity.this, "There are no events near you.\n"
-                        + " NOTE: This one is designed to fail for the purposes\n"
-                        + " of showing you how it would work in the final version.", Toast.LENGTH_LONG).show();
-            }
-        });
-
-
     }
 
     @Override
@@ -235,6 +111,13 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
         mClient.disconnect();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        //updateUI();
+    }
+
+    // Find out current location, it will take some time each time
     private void findLocation() {
         LocationRequest request = LocationRequest.create();
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -251,6 +134,99 @@ public class TicketActivity extends AppCompatActivity implements GoogleApiClient
                     });
         } catch (SecurityException se) {
             Log.e(TAG, "Problem with FusedLocationApi", se);
+        }
+    }
+
+    // This is our holder for the tickets
+    private class TicketHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private TextView mTitleTextView;
+        private Coupon mCoupon;
+
+        public TicketHolder(View itemView) {
+            super(itemView);
+            itemView.setOnClickListener(this);
+
+            mTitleTextView = (TextView) itemView.findViewById(R.id.ticket_prize);
+        }
+
+        public void bindTicket(Coupon coupon) {
+            mCoupon = coupon;
+            if (mCoupon.getClicked()) {
+                mTitleTextView.setText(mCoupon.getmCoupon());
+                mTitleTextView.setBackgroundColor(Color.WHITE);
+                //mTitleTextView.setBackgroundResource(R.drawable.golden_scratch);
+                //RelativeLayout relative = (RelativeLayout) findViewById(R.id.ticket);
+                //relative.setBackgroundResource(R.drawable.golden_scratch);
+            } else {
+                mTitleTextView.setText(""); // This will be blank and will only be displayed after they click
+            }
+
+        }
+
+        private double distance(double cLat, double cLog, double tLat, double tLog) {
+            return Math.sqrt(Math.pow(cLat - tLat, 2) + Math.pow(cLog - tLog, 2));
+        }
+        // This is where our checking locations will work
+        @Override
+        public void onClick(View v) {
+            findLocation(); // this will need to be called each time so that way it is updated every time
+            if (!mCoupon.getClicked()
+                    && distance(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(),
+                    mCoupon.getmLat(),mCoupon.getmLog()) <= 0.002) {
+                mTitleTextView.setText(mCoupon.getmCoupon());
+                // We have to go in and manually set the values to true in a loop
+                for (Coupon x : mList.getCoupons()) {
+                    if (x.getId() == mCoupon.getId()) {
+                        x.setClicked(true);
+                    }
+                }
+
+                //v.setBackgroundColor(Color.WHITE);
+                v.setBackgroundResource(R.drawable.golden_scratch);
+
+                // We set the background to be blank so they know they can't click it
+                //RelativeLayout relative = (RelativeLayout) findViewById(R.id.ticket);
+                //relative.setBackgroundResource(R.drawable.golden_scratch);
+
+            } else if (mCoupon.getClicked()) {
+                v.setBackgroundColor(Color.WHITE);
+                Toast.makeText(getApplicationContext(), "You already received this ticket.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Sorry there are no events near by.\nTry looking around.", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+    }
+
+    private class TicketAdapter extends RecyclerView.Adapter<TicketHolder> {
+        private List<Coupon> mCoupons;
+
+        public TicketAdapter(List<Coupon> coupons) {
+            Log.i(TAG, "Its in teh adapter class");
+            mCoupons = coupons;
+            Log.d(TAG, "The size of the list: " + mCoupons.size());
+        }
+
+        @Override
+        public TicketHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+            View view = layoutInflater.inflate(R.layout.fragment_ticket, parent, false);
+            return new TicketHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(TicketHolder holder, int position) {
+            Coupon coupon = mCoupons.get(position);
+            holder.bindTicket(coupon);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mCoupons.size();
+        }
+        public void setCoupons(List<Coupon> coupons) {
+            mCoupons = coupons;
         }
     }
 
