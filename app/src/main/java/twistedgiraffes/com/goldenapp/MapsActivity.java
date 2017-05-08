@@ -1,6 +1,7 @@
 package twistedgiraffes.com.goldenapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -81,18 +82,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Set up the marker click listener
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public boolean onMarkerClick(Marker marker) {
+            public boolean onMarkerClick(final Marker marker) {
                 //Display a snack bar with the respective event's description
                 final Event e = mDataBase.getEvent(UUID.fromString(marker.getSnippet()));
 
                 String eMsg = e.getTitle() + "\n" + e.getTime() + " - " + e.getEndTime()
                         + " on " + e.getDate() + " at " + e.getLocation();
                 Snackbar.make( mapFragment.getView(), eMsg, eMsg.length()*100)
-                        .setAction("Details", new View.OnClickListener() {
+                        .setAction("Go Here", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Intent intent = EventDetailActivity.newIntent(getBaseContext(), e.getId());
-                                startActivity(intent);
+                                Uri gmmIntentUri = Uri.parse("google.navigation:q="+
+                                        Double.toString(marker.getPosition().latitude)
+                                        + "," + Double.toString(marker.getPosition().longitude) );
+                                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                mapIntent.setPackage("com.google.android.apps.maps");
+                                startActivity(mapIntent);
                             }
                         })
                         .show();
@@ -100,7 +105,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 //Move camera to event
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), EVENT_ZOOM));
 
+                String oldSnippet = marker.getSnippet();
+                marker.setSnippet(eMsg);
+                marker.showInfoWindow();
+                marker.setSnippet(oldSnippet);
+
                 return true;
+            }
+        });
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                final Event e = mDataBase.getEvent(UUID.fromString(marker.getSnippet()));
+                Intent intent = EventDetailActivity.newIntent(getBaseContext(), e.getId());
+                startActivity(intent);
             }
         });
 
